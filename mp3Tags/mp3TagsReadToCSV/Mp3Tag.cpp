@@ -1,10 +1,10 @@
-
-
 #include "Mp3Tag.h"
+
 
 Mp3Tag::Mp3Tag(const Mp3Tag& other) {
 
 }
+
 
 Mp3Tag::Mp3Tag(std::filesystem::path filePath) : m_size(0), m_firstFrame(nullptr) {
 
@@ -49,9 +49,11 @@ Mp3Tag::Mp3Tag(std::filesystem::path filePath) : m_size(0), m_firstFrame(nullptr
 	}
 }
 
+
 Mp3Tag::~Mp3Tag() {
 
 }
+
 
 ID3V2FRM* Mp3Tag::getNextFrame(ID3V2FRM* currentFrame) {
 
