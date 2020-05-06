@@ -153,7 +153,6 @@
   <ItemGroup>
     <ClCompile Include="..\hxlString\hxlstr.cpp" />
     <ClCompile Include="csvFileOp.cpp" />
-    <ClCompile Include="hxlutil.cpp" />
     <ClCompile Include="Mp3Frame.cpp" />
     <ClCompile Include="ID3V2Tag.cpp" />
     <ClCompile Include="Mp3Tag.cpp" />
@@ -161,7 +160,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="csvFileOp.h" />
-    <ClInclude Include="hxlutil.h" />
     <ClInclude Include="Mp3Frame.h" />
     <ClInclude Include="ID3V2Tag.h" />
     <ClInclude Include="Mp3Tag.h" />

@@ -18,9 +18,6 @@
     <ClCompile Include="mp3TagsReadToCSV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hxlutil.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="ID3V2Tag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -38,9 +35,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="hxlutil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ID3V2Tag.h">
       <Filter>Header Files</Filter>
     </ClInclude>

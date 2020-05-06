@@ -1,10 +1,9 @@
 #pragma once
 #include <fstream>
 #include <filesystem>
-#include "Mp3Frame.h"
-#include "ID3V2Tag.h"
 #include "hxlstr.h"
-
+#include "ID3V2Tag.h"
+#include "Mp3Frame.h"
 
 
 class Mp3Tag

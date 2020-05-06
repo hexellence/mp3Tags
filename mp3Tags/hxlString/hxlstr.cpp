@@ -7,12 +7,14 @@ void convert_char_to_char16(const uint8_t* in, int size, uint8_t* out) {
 	}
 }
 
+
 void convert_char16_to_char(const uint8_t* in, int size, uint8_t* out) {
 	for (int i = 0; i < size; ++i) {
 		out[i] = in[i * 2];
 	}
 
 }
+
 
 int hxlstr::getSize(const char* str) {
 	int len = 0;
@@ -25,6 +27,7 @@ int hxlstr::getSize(const char* str) {
 	return len;
 }
 
+
 int hxlstr::getSize(const char16_t* str) {
 	int len = 0;
 	if (str != nullptr) {
@@ -35,7 +38,9 @@ int hxlstr::getSize(const char16_t* str) {
 	return len * 2;
 }
 
+
 hxlstr::hxlstr() : m_text(nullptr), m_size(0) {}
+
 
 hxlstr::hxlstr(const uint8_t* init, int size, ENC enc) : m_text(nullptr), m_size(0) {
 
@@ -64,6 +69,7 @@ hxlstr::hxlstr(const uint8_t* init, int size, ENC enc) : m_text(nullptr), m_size
 	}
 }
 
+
 hxlstr::hxlstr(const char* init) : m_text(nullptr), m_size(0) {
 	//we expect to find a terminator here
 	if (init != nullptr) {
@@ -78,6 +84,7 @@ hxlstr::hxlstr(const char* init) : m_text(nullptr), m_size(0) {
 		std::cout << "illegal parameters" << std::endl;
 	}
 }
+
 
 hxlstr::hxlstr(char init, int size) {
 	char* tempInit = new char[size];
@@ -94,6 +101,7 @@ hxlstr::hxlstr(char init, int size) {
 	m_text[m_size + 1] = '\0';
 }
 
+
 hxlstr::hxlstr(const char16_t* init) : m_text(nullptr), m_size(0) {
 	//we expect a terminator here
 	if (init != nullptr) {
@@ -109,6 +117,7 @@ hxlstr::hxlstr(const hxlstr& other) {
 	memcpy(m_text, other.m_text, m_size + 2);
 }
 
+
 const hxlstr& hxlstr::operator=(const hxlstr& other) {
 	delete[] m_text;
 	m_size = other.m_size;
@@ -116,6 +125,7 @@ const hxlstr& hxlstr::operator=(const hxlstr& other) {
 	memcpy(m_text, other.m_text, m_size + 2);
 	return *this;
 }
+
 
 const hxlstr& hxlstr::operator=(const char* str) {
 	delete[] m_text;
@@ -128,6 +138,7 @@ const hxlstr& hxlstr::operator=(const char* str) {
 	return *this;
 }
 
+
 const hxlstr& hxlstr::operator=(const char16_t* str) {
 	delete[] m_text;
 	int sourceSize = getSize(str);
@@ -137,17 +148,21 @@ const hxlstr& hxlstr::operator=(const char16_t* str) {
 	return *this;
 }
 
+
 hxlstr::~hxlstr() {
 	delete[] m_text;
 }
+
 
 const char* hxlstr::c_str() {
 	return m_text;
 }
 
+
 int hxlstr::size() {
 	return m_size;
 }
+
 
 //Fiends
 std::ostream& operator<<(std::ostream& out, const hxlstr& obj) {
@@ -159,6 +174,7 @@ std::ostream& operator<<(std::ostream& out, const hxlstr& obj) {
 	}
 	return out;
 }
+
 
 bool operator==(const hxlstr& obj1, const hxlstr& obj2) {
 	bool retVal = false;

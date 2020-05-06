@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 
-#pragma pack(push, 1)
 //  ID3V2
 //	+---------------------------- - +
 //	| Header(10 bytes)				|
@@ -17,7 +16,7 @@
 //	| Footer(10 bytes, OPTIONAL)	|
 //	+---------------------------- - +
 
-
+#pragma pack(push, 1)
 struct ID3V2PLD {
 	uint8_t enc;
 	char txt;
@@ -145,12 +144,14 @@ enum ID3_FrameID
 	/* >>>> */ ID3FID_LASTFRAMEID        /**< Last field placeholder */
 };
 
+
 struct ID3_FrameDef
 {
 	ID3_FrameID   eID;
 	char          sLongTextID[4 + 1];
 	const char* sDescription;
 };
+
 
 static  ID3_FrameDef ID3_FrameDefs[] =
 {
@@ -239,21 +240,6 @@ static const uint8_t UTF16BEWBOM = 2;
 static const uint8_t UTF16BE = 3;
 static const uint8_t UTF8 = 4;
 
-
 const uint8_t* getTextAddress(const ID3V2FRM* frame);
 int calcID3FieldSize(const uint8_t* number);
 int GetID3v2PayloadSize(const ID3V2FRM* frame);
-
-/*
-status_t ReadID3v1Header(std::ifstream& file, ID3V1* header);
-int ReadID3v2Header(std::filesystem::path fileName, ID3V2HDR& header);
-status_t ReadWholeID3V2Tag(std::filesystem::path fileName, char* tagBuffer, int tagSize);
-status_t ReadID3v1Header(std::ifstream& file, ID3V1* header);
-uint32_t GetID3v2PayloadSize(ID3V2FRM* frame);
-uint32_t GetID3v2PayloadLen(ID3V2FRM* frame);
-void getPayload(ID3V2FRM* frame, MP3FIELD& out);
-ID3V2FRM* getFrameId(ID3V2FRM* currentFrame, std::string* frameID);
-bool isUTF16BOM(const uint8_t* check);
-
-*/
-

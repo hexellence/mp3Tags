@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-
 enum class ENC {
 	ASCII,
 	UTF16LE,
@@ -35,15 +34,14 @@ public:
 	hxlstr(const char16_t* init);
 	hxlstr(const hxlstr& other);
 	hxlstr(char init, int size = 1);
+	~hxlstr();
 	
 	const hxlstr& operator=(const hxlstr& other);
 	const hxlstr& operator=(const char* str);
 	const hxlstr& operator=(const char16_t* str);
-
+	
 	const char* c_str();
-	int size();
-
-	~hxlstr();	
+	int size();	
 
 	friend std::ostream& operator<<(std::ostream& out, const hxlstr& obj);
 	friend bool operator==(const hxlstr& obj1, const hxlstr& obj2);

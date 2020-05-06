@@ -16,6 +16,7 @@ const uint8_t* getTextAddress(const ID3V2FRM* frame) {
 	return txtAddress;
 }
 
+
 int calcID3FieldSize(const uint8_t* number) {
 	int retVal = 0;
 	retVal = number[3] +
@@ -24,6 +25,7 @@ int calcID3FieldSize(const uint8_t* number) {
 		number[0] * (1 << 24);
 	return retVal;
 }
+
 
 int GetID3v2PayloadSize(const ID3V2FRM* frame) {
 
