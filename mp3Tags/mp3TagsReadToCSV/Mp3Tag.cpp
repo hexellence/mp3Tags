@@ -2,34 +2,13 @@
 #include "Mp3Tag.h"
 #include "csvFileOp.h"
 
-const char nonID3FilesLog[] = "nonID3FilesLog.txt";
-const char illegalFlagsLog[] = "illegalFlagsLog.txt";
-
-Mp3Tag::Mp3Tag(std::filesystem::path filePath) : m_size(0), m_firstFrame(nullptr), m_id3Header(nullptr){
+Mp3Tag::Mp3Tag(std::filesystem::path filePath) : m_size(0), m_firstFrame(nullptr), m_id3Header(nullptr), m_status(0) {
 	
 	ID3V2HDR id3v2Hdr;
 	std::ifstream mp3File;	
 	mp3File.open(filePath, std::ios::binary);
 
-	//log files
-	std::ofstream nonID3FilesLogFile;
-	std::ofstream illegalFlagsLogFile;	
-	
-	if (mp3File.is_open()) {
-
-		nonID3FilesLogFile.open(nonID3FilesLog, std::ios::binary);
-		illegalFlagsLogFile.open(illegalFlagsLog, std::ios::binary);
-		if (illegalFlagsLogFile.is_open() && nonID3FilesLogFile.is_open()) {
-
-			nonID3FilesLogFile.write(BOM, 2);
-			illegalFlagsLogFile.write(BOM, 2);
-
-			nonID3FilesLogFile.close();
-			illegalFlagsLogFile.close();
-		}
-		else {
-			std::cout << "Error openning log files" << std::endl;
-		}
+	if (mp3File.is_open()) {		
 
 		mp3File.seekg(std::ios::beg);
 		mp3File.read((char*)&id3v2Hdr, sizeof(id3v2Hdr));	//only read header first for effectiveness		
@@ -56,17 +35,14 @@ Mp3Tag::Mp3Tag(std::filesystem::path filePath) : m_size(0), m_firstFrame(nullptr
 			}
 
 			if (id3v2Hdr.flags != 0x00) {
-				m_size = 0;
-				illegalFlagsLogFile.write(m_filePath.c_str(), m_filePath.size());
-				illegalFlagsLogFile.write("\r", 2);				
+				m_size = 0;			
+				m_status = 2;				
 			}
 		}
 		else {
-			 nonID3FilesLogFile.write(m_filePath.c_str(), m_filePath.size());
-			 illegalFlagsLogFile.write("\r", 1);
+			m_status = 1;			
 		}
-		nonID3FilesLogFile.close();
-		illegalFlagsLogFile.close();
+		
 	}
 	else {
 		std::cout << "Mp3 cannot be opened" << std::endl;
@@ -119,28 +95,22 @@ void Mp3Tag::iterateFrames() {
 			if (curFrame.id() == "TYER") {
 				m_year = curFrame.text();
 			}
-			else if (curFrame.id() == "TALB")
-			{
+			else if (curFrame.id() == "TALB") {
 				m_album = curFrame.text();
 			}
-			else if (curFrame.id() == "TIT2")
-			{
+			else if (curFrame.id() == "TIT2") {
 				m_title = curFrame.text();
 			}
-			else if (curFrame.id() == "TRCK")
-			{
+			else if (curFrame.id() == "TRCK") {
 				m_trackNo = curFrame.text();
 			}
-			else if (curFrame.id() == "TCON")
-			{
+			else if (curFrame.id() == "TCON") {
 				m_genre = curFrame.text();
 			}
-			else if (curFrame.id() == "TPE2")
-			{
+			else if (curFrame.id() == "TPE2") {
 				m_artist1 = curFrame.text();
 			}
-			else if (curFrame.id() == "TPE1")
-			{
+			else if (curFrame.id() == "TPE1") {
 				m_artist2 = curFrame.text();
 			}
 

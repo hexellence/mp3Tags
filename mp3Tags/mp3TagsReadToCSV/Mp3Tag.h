@@ -24,11 +24,13 @@ public:
 	hxlstr m_filePath;
 	hxlstr m_trackNo;
 	hxlstr m_genre;
+	int m_status;
 
 private:
 	int m_size;
 	ID3V2FRM* m_firstFrame;
 	ID3V2HDR* m_id3Header;
+	
 
 	ID3V2FRM* getNextFrame(ID3V2FRM* currentFrame);
 	void iterateFrames();
