@@ -1,12 +1,36 @@
+#include <fstream>
 #include "Mp3Tag.h"
+#include "csvFileOp.h"
+
+const char nonID3FilesLog[] = "nonID3FilesLog.txt";
+const char illegalFlagsLog[] = "illegalFlagsLog.txt";
 
 Mp3Tag::Mp3Tag(std::filesystem::path filePath) : m_size(0), m_firstFrame(nullptr), m_id3Header(nullptr){
-
+	
 	ID3V2HDR id3v2Hdr;
-	std::ifstream mp3File;
+	std::ifstream mp3File;	
 	mp3File.open(filePath, std::ios::binary);
 
+	//log files
+	std::ofstream nonID3FilesLogFile;
+	std::ofstream illegalFlagsLogFile;	
+	
 	if (mp3File.is_open()) {
+
+		nonID3FilesLogFile.open(nonID3FilesLog, std::ios::binary);
+		illegalFlagsLogFile.open(illegalFlagsLog, std::ios::binary);
+		if (illegalFlagsLogFile.is_open() && nonID3FilesLogFile.is_open()) {
+
+			nonID3FilesLogFile.write(BOM, 2);
+			illegalFlagsLogFile.write(BOM, 2);
+
+			nonID3FilesLogFile.close();
+			illegalFlagsLogFile.close();
+		}
+		else {
+			std::cout << "Error openning log files" << std::endl;
+		}
+
 		mp3File.seekg(std::ios::beg);
 		mp3File.read((char*)&id3v2Hdr, sizeof(id3v2Hdr));	//only read header first for effectiveness		
 		hxlstr id((const uint8_t*)id3v2Hdr.id, 3, hxlstr::ENC::ASCII);
@@ -16,32 +40,38 @@ Mp3Tag::Mp3Tag(std::filesystem::path filePath) : m_size(0), m_firstFrame(nullptr
 		if (id == "ID3") {
 			m_size = calcID3FieldSize((const uint8_t*)id3v2Hdr.size);
 			if (m_size > 0) {
-				uint8_t* m_buffer = new uint8_t[m_size];
+				uint8_t* m_buffer = new uint8_t[m_size + 10];	//size in file is excluding the header
 				mp3File.seekg(std::ios::beg);
-				mp3File.read((char*)m_buffer, m_size);
+				mp3File.read((char*)m_buffer, m_size + 10);
 				mp3File.close();
 				m_id3Header = (ID3V2HDR*)m_buffer;
 								
 				m_firstFrame = &m_id3Header->firstFrame;
+				std::cout << m_filePath << std::endl;
 				iterateFrames();
 				delete[] m_buffer;
 			}
 			else {
-				std::cout << "ID3 size too big for file: " << m_fileName << std::endl;
+				std::cout << "ID3 size wrong for file: " << m_fileName << std::endl;
 			}
 
 			if (id3v2Hdr.flags != 0x00) {
 				m_size = 0;
-				std::cout << "Unexpected Tag flags are set: " << m_fileName << std::endl;
+				illegalFlagsLogFile.write(m_filePath.c_str(), m_filePath.size());
+				illegalFlagsLogFile.write("\r", 2);				
 			}
 		}
 		else {
-			std::cout << "Not ID3V2 compatible: " << m_fileName << std::endl;
+			 nonID3FilesLogFile.write(m_filePath.c_str(), m_filePath.size());
+			 illegalFlagsLogFile.write("\r", 1);
 		}
+		nonID3FilesLogFile.close();
+		illegalFlagsLogFile.close();
 	}
 	else {
 		std::cout << "Mp3 cannot be opened" << std::endl;
 	}
+
 }
 
 
@@ -53,10 +83,24 @@ Mp3Tag::~Mp3Tag() {
 ID3V2FRM* Mp3Tag::getNextFrame(ID3V2FRM* currentFrame) {
 
 	ID3V2FRM* nextFrame = nullptr;
+	if (currentFrame != nullptr) {
 
-	int payloadSize = calcID3FieldSize(currentFrame->payloadSize);
+		int payloadSize = calcID3FieldSize(currentFrame->payloadSize);
 
-	nextFrame = (ID3V2FRM*)((int)currentFrame + 10 + payloadSize);
+		nextFrame = (ID3V2FRM*)((int)currentFrame + 10 + payloadSize);
+
+		int nextPayloadSize = calcID3FieldSize(nextFrame->payloadSize);
+		if (nextPayloadSize < 250) {
+			if ((int)nextFrame > m_size + (int)m_id3Header) {
+				nextFrame = nullptr;
+			}
+			else {
+				
+			}
+		}
+		else{
+		}
+	}
 
 	return nextFrame;
 }
@@ -69,7 +113,7 @@ void Mp3Tag::iterateFrames() {
 
 	if (m_size > 0) {
 
-		while (isIdValid(*p_id3v2CurrFrm)) {
+		while (isIdValid(p_id3v2CurrFrm)) {
 			Mp3Frame curFrame = Mp3Frame(p_id3v2CurrFrm);
 
 			if (curFrame.id() == "TYER") {

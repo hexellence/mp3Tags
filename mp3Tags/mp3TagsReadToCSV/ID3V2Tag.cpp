@@ -1,4 +1,6 @@
+#include <iostream>
 #include "ID3V2Tag.h"
+
 
 
 const uint8_t* getTextAddress(const ID3V2FRM* frame) {
@@ -28,32 +30,42 @@ int calcID3FieldSize(const uint8_t* number) {
 
 
 int GetID3v2PayloadSize(const ID3V2FRM* frame) {
-
-	int payloadSize = calcID3FieldSize(frame->payloadSize);
-	if (payloadSize > 0) {
-		switch (frame->payload.enc) {
-		case ENC_ASCII:
-			payloadSize = payloadSize - 1;	//disregard the type indicator byte
-			break;
-		default:
-			payloadSize = 0;
-			break;
+	int payloadSize = 0;
+	if (frame != nullptr) {
+		payloadSize = calcID3FieldSize(frame->payloadSize);
+		if (payloadSize > 0) {
+			switch (frame->payload.enc) {
+			case ENC_ASCII:
+				payloadSize = payloadSize - 1;	//disregard the type indicator byte
+				break;
+			default:
+				payloadSize = 0;
+				break;
+			}
 		}
-	}
-	else {
-		payloadSize = 0;
+		else {
+			payloadSize = 0;
+		}
 	}
 	return payloadSize;
 }
 
 
-bool isIdValid(const ID3V2FRM& frame) {
+bool isIdValid(const ID3V2FRM* frame) {
 	bool idFound = false;
-	for (auto item : ID3_FrameDefs) {
-		if (frame.id == item.sLongTextID) {
-			idFound = true;
-			break;
+	if (frame != nullptr) {
+		for (auto item : ID3_FrameDefs) {
+			if ((frame->id[0] == item.sLongTextID[0]) && (frame->id[1] == item.sLongTextID[1])
+				&& (frame->id[2] == item.sLongTextID[2]) && (frame->id[3] == item.sLongTextID[3])) {
+				idFound = true;
+				break;
+			}
+			else {
+			}
 		}
+	}
+	else {
+		//std::cout << "isIdValid: illegal frame address" << std::endl;
 	}
 	return idFound;
 }

@@ -139,9 +139,6 @@ enum ID3_FrameID
 	/* WPAY */ ID3FID_WWWPAYMENT,        /**< Payment */
 	/* WPUB */ ID3FID_WWWPUBLISHER,      /**< Official publisher webpage */
 	/* WXXX */ ID3FID_WWWUSER,           /**< User defined URL link */
-	/*      */ ID3FID_METACRYPTO,        /**< Encrypted meta frame (id3v2.2.x) */
-	/*      */ ID3FID_METACOMPRESSION,   /**< Compressed meta frame (id3v2.2.1) */
-	/* >>>> */ ID3FID_LASTFRAMEID        /**< Last field placeholder */
 };
 
 
@@ -230,8 +227,6 @@ static  ID3_FrameDef ID3_FrameDefs[] =
 {ID3FID_WWWPAYMENT,			"WPAY", "Payment"},
 {ID3FID_WWWPUBLISHER,		"WPUB", "Official publisher webpage"},
 {ID3FID_WWWUSER,			"WXXX", "User defined URL link"},
-{ID3FID_METACRYPTO,			"", "Encrypted meta frame"},
-{ID3FID_METACOMPRESSION,	"", "Compressed data meta frame"},
 };
 
 static const uint8_t ENC_ASCII = 0;
@@ -243,4 +238,4 @@ static const uint8_t UTF8 = 4;
 const uint8_t* getTextAddress(const ID3V2FRM* frame);
 int calcID3FieldSize(const uint8_t* number);
 int GetID3v2PayloadSize(const ID3V2FRM* frame);
-bool isIdValid(const ID3V2FRM& frame);
+bool isIdValid(const ID3V2FRM* frame);

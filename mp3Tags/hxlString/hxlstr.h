@@ -40,8 +40,8 @@ public:
 	const hxlstr& operator=(const char* str);
 	const hxlstr& operator=(const char16_t* str);
 	
-	const char* c_str();
-	int size();	
+	const char* c_str() const;
+	int size() const;	
 
 	friend std::ostream& operator<<(std::ostream& out, const hxlstr& obj);
 	friend bool operator==(const hxlstr& obj1, const hxlstr& obj2);

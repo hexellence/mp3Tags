@@ -9,8 +9,8 @@ void convert_char_to_char16(const uint8_t* in, int size, uint8_t* out) {
 
 
 void convert_char16_to_char(const uint8_t* in, int size, uint8_t* out) {
-	for (int i = 0; i < size; ++i) {
-		out[i] = in[i * 2];
+	for (int i = 0; i < size; i = i + 2) {
+		out[i / 2] = in[i];
 	}
 
 }
@@ -154,12 +154,12 @@ hxlstr::~hxlstr() {
 }
 
 
-const char* hxlstr::c_str() {
+const char* hxlstr::c_str() const {
 	return m_text;
 }
 
 
-int hxlstr::size() {
+int hxlstr::size() const {
 	return m_size;
 }
 
@@ -167,9 +167,9 @@ int hxlstr::size() {
 //Fiends
 std::ostream& operator<<(std::ostream& out, const hxlstr& obj) {
 	if ((obj.m_text != nullptr) && (obj.m_size > 0)) {
-		char* tempText = new char[obj.m_size];
-		convert_char16_to_char((const uint8_t*)obj.m_text, obj.m_size, (uint8_t*)tempText);
-		out << tempText << std::flush;
+		char* tempText = new char[(obj.m_size / 2) + 1];
+		convert_char16_to_char((const uint8_t*)obj.m_text, obj.m_size + 2, (uint8_t*)tempText);
+		out << tempText;
 		delete[] tempText;
 	}
 	return out;

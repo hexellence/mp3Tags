@@ -70,6 +70,6 @@ const Mp3Frame& Mp3Frame::operator=(const Mp3Frame& other) {
 //assignment operator from char16_t
 const Mp3Frame& Mp3Frame::operator=(const char16_t* other) {
 	m_str = hxlstr(other);
-	m_id = "NONE";
+	m_id = "";
 	return *this;
 }

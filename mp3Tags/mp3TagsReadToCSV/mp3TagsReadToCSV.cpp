@@ -10,8 +10,8 @@ using namespace std;
 
 string output_file_name{ "D:\\TUNCA_3_music\\musicArchive.csv" };
 
-//const char archivePath[] = { "D:\\TUNCA_3_music\\Music" };
-const char archivePath[] = { "D:\\mp3\\mp3" };
+const char archivePath[] = { "D:\\TUNCA_3_music\\Music" };
+//const char archivePath[] = { "D:\\mp3\\mp3" };
 
 int main()
 {
@@ -23,7 +23,6 @@ int main()
 	csvFile.open(output_file_name);
 
 	if (csvFile.is_open()) {
-
 		writeColumns(csvFile);
 
 		for (auto& p : std::filesystem::recursive_directory_iterator(archivePath)) {
@@ -37,7 +36,7 @@ int main()
 
 			}//if mp3 file
 		}//for all files
+		csvFile.close();
 	}//if csv file open
-
 }
 
