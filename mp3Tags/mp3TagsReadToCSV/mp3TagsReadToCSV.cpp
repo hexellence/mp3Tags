@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <string>
 #include <filesystem>
 #include "hxlstr.h"
@@ -32,8 +31,10 @@ int main()
 			input_file_ext = p.path().extension().string().c_str();
 
 			if ((input_file_ext == ".mp3") || (input_file_ext == ".MP3") || (input_file_ext == ".Mp3")) {
+				
+				Mp3Tag currentTag(p.path());
+				writeNextLine(csvFile, currentTag);
 
-				mp3Archive.push_back(Mp3Tag(p.path()));
 			}//if mp3 file
 		}//for all files
 	}//if csv file open

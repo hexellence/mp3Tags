@@ -243,3 +243,4 @@ static const uint8_t UTF8 = 4;
 const uint8_t* getTextAddress(const ID3V2FRM* frame);
 int calcID3FieldSize(const uint8_t* number);
 int GetID3v2PayloadSize(const ID3V2FRM* frame);
+bool isIdValid(const ID3V2FRM& frame);

@@ -16,13 +16,6 @@ Mp3Frame::Mp3Frame(ID3V2FRM* frame) : m_str(""), m_id("") {
 			if (payloadAdrs != nullptr) {
 				
 				m_str = hxlstr((const uint8_t*)payloadAdrs, payloadSize, hxlstr::ENC::ASCII);
-				bool idFound = false;
-				for (auto item : ID3_FrameDefs) {
-					if (m_id == item.sLongTextID) {
-						idFound = true;
-						break;
-					}
-				}
 			}
 		}
 	}

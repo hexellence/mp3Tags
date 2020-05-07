@@ -45,3 +45,15 @@ int GetID3v2PayloadSize(const ID3V2FRM* frame) {
 	}
 	return payloadSize;
 }
+
+
+bool isIdValid(const ID3V2FRM& frame) {
+	bool idFound = false;
+	for (auto item : ID3_FrameDefs) {
+		if (frame.id == item.sLongTextID) {
+			idFound = true;
+			break;
+		}
+	}
+	return idFound;
+}
