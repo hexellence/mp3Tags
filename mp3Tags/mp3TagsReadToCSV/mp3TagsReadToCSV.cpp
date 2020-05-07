@@ -38,5 +38,8 @@ int main()
 		}//for all files
 		csvFile.close();
 	}//if csv file open
+	else {
+		cout << ".csv file cannot be opened" << endl;
+	}
 }
 

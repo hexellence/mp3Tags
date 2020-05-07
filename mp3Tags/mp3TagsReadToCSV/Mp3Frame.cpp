@@ -14,8 +14,16 @@ Mp3Frame::Mp3Frame(ID3V2FRM* frame) : m_str(""), m_id("") {
 		if (payloadSize > 0) {
 			const uint8_t* payloadAdrs = getTextAddress(frame);
 			if (payloadAdrs != nullptr) {
-				
-				m_str = hxlstr((const uint8_t*)payloadAdrs, payloadSize, hxlstr::ENC::ASCII);
+				if (frame->payload.enc == ENC_ASCII) {
+					m_str = hxlstr((const uint8_t*)payloadAdrs, payloadSize, hxlstr::ENC::ASCII);
+				}
+				else if (frame->payload.enc == ENC_UTF16LEWBOM) {
+					m_str = hxlstr((const uint8_t*)payloadAdrs, payloadSize, hxlstr::ENC::UTF16LE);
+				}
+				else {
+					std::cout << "Mp3Frame::Mp3Frame: Illegal encoding type" << std::endl;
+				}
+					
 			}
 		}
 	}

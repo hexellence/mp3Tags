@@ -11,6 +11,9 @@ const uint8_t* getTextAddress(const ID3V2FRM* frame) {
 	case ENC_ASCII:
 		txtAddress = (const uint8_t*)(rawAddress);	//no BOM to take into account
 		break;
+	case ENC_UTF16LEWBOM:
+		txtAddress = (const uint8_t*)(rawAddress + 2);	//no BOM to take into account
+		break;
 	default:
 		txtAddress = nullptr;
 		break;
@@ -37,6 +40,9 @@ int GetID3v2PayloadSize(const ID3V2FRM* frame) {
 			switch (frame->payload.enc) {
 			case ENC_ASCII:
 				payloadSize = payloadSize - 1;	//disregard the type indicator byte
+				break;
+			case ENC_UTF16LEWBOM:
+				payloadSize = payloadSize - 3;	//disregard the type indicator byte and BOM
 				break;
 			default:
 				payloadSize = 0;
