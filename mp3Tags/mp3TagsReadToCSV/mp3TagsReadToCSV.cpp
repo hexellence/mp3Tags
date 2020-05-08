@@ -9,8 +9,9 @@
 using namespace std;
 
 //log files
-const char nonID3FilesLog[] = "D:\\TUNCA_3_music\\nonID3FilesLog.txt";
-const char illegalFlagsLog[] = "D:\\TUNCA_3_music\\illegalFlagsLog.txt";
+const char nonID3FilesLogFileName[] = "D:\\TUNCA_3_music\\nonID3FilesLog.txt";
+const char badID3FilesLogFileName[] = "D:\\TUNCA_3_music\\badID3FilesLog.txt";
+const char nonMp3FilesLogFileName[] = "D:\\TUNCA_3_music\\nonMp3FilesLog.txt";
 
 //list of Mp3s
 const char output_file_name[] = { "D:\\TUNCA_3_music\\musicArchive.csv" };
@@ -19,60 +20,35 @@ const char archivePath[] = { "D:\\TUNCA_3_music\\Music" };
 //const char archivePath[] = { "D:\\mp3\\mp3" };
 
 int main()
-{
-	hxlstr input_file_ext{};
+{	
 	ofstream csvFile;
-	ofstream nonID3FilesLogFile;
-	ofstream illegalFlagsLogFile;
-
-	vector<Mp3Tag> mp3Archive;
+	ofstream nonID3FilesLog;
+	ofstream badID3FilesLog;
+	ofstream nonMp3FilesLog;	
 
 	csvFile.open(output_file_name);
+	nonID3FilesLog.open(nonID3FilesLogFileName, std::ios::binary);
+	badID3FilesLog.open(badID3FilesLogFileName, std::ios::binary);
+	nonMp3FilesLog.open(nonMp3FilesLogFileName, std::ios::binary);
 
-	if (csvFile.is_open()) {
-		writeColumns(csvFile);
-
-		nonID3FilesLogFile.open(nonID3FilesLog, std::ios::binary);
-		illegalFlagsLogFile.open(illegalFlagsLog, std::ios::binary);
-		if (illegalFlagsLogFile.is_open() && nonID3FilesLogFile.is_open()) {
-
-			nonID3FilesLogFile.write(BOM, 2);
-			illegalFlagsLogFile.write(BOM, 2);			
-		}
-		else {
-			std::cout << "Error openning log files" << std::endl;
-		}
+	if (prepareFiles(csvFile, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog) == true) {		
 
 		for (auto& p : std::filesystem::recursive_directory_iterator(archivePath)) {
 
-			input_file_ext = p.path().extension().string().c_str();
+			hxlstr input_file_ext = p.path().extension().string().c_str();
 
-			if ((input_file_ext == ".mp3") || (input_file_ext == ".MP3") || (input_file_ext == ".Mp3")) {
-				
+			if (isMp3(input_file_ext) == true) {
+
 				Mp3Tag currentTag(p.path());
-				switch (currentTag.m_status) {
-				case 1:
-					nonID3FilesLogFile.write(currentTag.m_filePath.c_str(), currentTag.m_filePath.size());
-					nonID3FilesLogFile.write(CR.c_str(), CR.size());
-					break;
-				case 2:
-					illegalFlagsLogFile.write(currentTag.m_filePath.c_str(), currentTag.m_filePath.size());
-					illegalFlagsLogFile.write(CR.c_str(), CR.size());
-					break;
-				default:
-					break;
-				}
-
 				writeNextLine(csvFile, currentTag);
+				writeLogs(currentTag, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog);
 
 			}//if mp3 file
+			
 		}//for all files
-		csvFile.close();
-		nonID3FilesLogFile.close();
-		illegalFlagsLogFile.close();
+		closeFiles(csvFile, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog);
 	}//if csv file open
 	else {
 		cout << ".csv file cannot be opened" << endl;
 	}
 }
-
