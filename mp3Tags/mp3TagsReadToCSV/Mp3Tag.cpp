@@ -1,48 +1,53 @@
 #include <fstream>
 #include "Mp3Tag.h"
-#include "csvFileOp.h"
+//#include "csvFileOp.h"
 
 Mp3Tag::Mp3Tag(std::filesystem::path filePath) : m_size(0), m_firstFrame(nullptr), m_id3Header(nullptr), m_status(0) {
-	
+
 	ID3V2HDR id3v2Hdr;
-	std::ifstream mp3File;	
+	std::ifstream mp3File;
 	mp3File.open(filePath, std::ios::binary);
 
-	if (mp3File.is_open()) {		
+	if (getID3V2Header(mp3File, &id3v2Hdr)) {
 
-		mp3File.seekg(std::ios::beg);
-		mp3File.read((char*)&id3v2Hdr, sizeof(id3v2Hdr));	//only read header first for effectiveness		
 		hxlstr id((const uint8_t*)id3v2Hdr.id, 3, hxlstr::ENC::ASCII);
 		m_fileName = filePath.filename().generic_u16string().c_str();
 		m_filePath = filePath.generic_u16string().c_str();
+		m_filePath = filePath.generic_u16string().c_str();
+		hxlstr fileExt = filePath.extension().generic_u16string().c_str();
 
-		if (id == "ID3") {
-			m_size = calcID3FieldSize((const uint8_t*)id3v2Hdr.size);
-			if (m_size > 0) {
-				uint8_t* m_buffer = new uint8_t[m_size + 10];	//size in file is excluding the header
-				mp3File.seekg(std::ios::beg);
-				mp3File.read((char*)m_buffer, m_size + 10);
-				mp3File.close();
-				m_id3Header = (ID3V2HDR*)m_buffer;
-								
-				m_firstFrame = &m_id3Header->firstFrame;
-				std::cout << m_filePath << std::endl;
-				iterateFrames();
-				delete[] m_buffer;
+		if (isMp3(filePath) == true) {
+
+			if (id == "ID3") {
+				m_size = calcID3FieldSize(id3v2Hdr.size);
+				if (m_size > 0) {
+					uint8_t* m_buffer = new uint8_t[m_size + 10];	//size in file is excluding the header
+					mp3File.seekg(std::ios::beg);
+					mp3File.read((char*)m_buffer, m_size + 10);
+					mp3File.close();
+					m_id3Header = (ID3V2HDR*)m_buffer;
+
+					m_firstFrame = &m_id3Header->firstFrame;
+					std::cout << m_filePath << std::endl;
+					iterateFrames();
+					delete[] m_buffer;
+				}
+				else {
+					std::cout << "ID3 size wrong for file: " << m_fileName << std::endl;
+				}
+
+				if (id3v2Hdr.flags != 0x00) {
+					m_size = 0;
+					m_status = 2;
+				}
 			}
 			else {
-				std::cout << "ID3 size wrong for file: " << m_fileName << std::endl;
-			}
-
-			if (id3v2Hdr.flags != 0x00) {
-				m_size = 0;			
-				m_status = 2;				
+				m_status = 1;
 			}
 		}
-		else {
-			m_status = 1;			
+		else if(isWma(filePath) == true) {
+			m_status = 3;
 		}
-		
 	}
 	else {
 		std::cout << "Mp3 cannot be opened" << std::endl;
@@ -71,14 +76,29 @@ ID3V2FRM* Mp3Tag::getNextFrame(ID3V2FRM* currentFrame) {
 				nextFrame = nullptr;
 			}
 			else {
-				
+
 			}
 		}
-		else{
+		else {
 		}
 	}
 
 	return nextFrame;
+}
+
+
+bool Mp3Tag::getID3V2Header(std::ifstream& mp3File, ID3V2HDR* hdr) {
+	bool retVal = false;
+	if (mp3File.is_open()) {
+
+		mp3File.seekg(std::ios::beg);
+		mp3File.read((char*)hdr, sizeof(ID3V2HDR));	//only read header first for effectiveness		
+		retVal = true;
+	}
+	else {
+		retVal = false;
+	}
+	return retVal;
 }
 
 
@@ -115,7 +135,20 @@ void Mp3Tag::iterateFrames() {
 			}
 
 			p_id3v2CurrFrm = getNextFrame(p_id3v2CurrFrm);
-			
+
 		}	//while
 	}//if size is non zero
+}
+
+bool isMp3(std::filesystem::path filePath) {
+
+	hxlstr input_file_ext = filePath.extension().string().c_str();
+	bool retVal = (input_file_ext == ".mp3") || (input_file_ext == ".MP3") || (input_file_ext == ".Mp3");
+	return retVal;
+}
+
+bool isWma(std::filesystem::path filePath) {
+	hxlstr input_file_ext = filePath.extension().string().c_str();
+	bool retVal = (input_file_ext == ".wma") || (input_file_ext == ".WMA") || (input_file_ext == ".Wma");
+	return retVal;
 }

@@ -63,12 +63,16 @@ void writeLogs(Mp3Tag& currentTag, std::ofstream& nonID3FilesLog, std::ofstream&
 
 	switch (currentTag.m_status) {
 	case 1:
-		nonID3FilesLog.write(currentTag.m_filePath.c_str(), currentTag.m_filePath.size());
-		nonID3FilesLog.write(CR.c_str(), CR.size());
+		writeField(nonID3FilesLog, currentTag.m_filePath);
+		writeField(nonID3FilesLog, CR);
 		break;
 	case 2:
-		badID3FilesLog.write(currentTag.m_filePath.c_str(), currentTag.m_filePath.size());
-		badID3FilesLog.write(CR.c_str(), CR.size());
+		writeField(badID3FilesLog, currentTag.m_filePath);
+		writeField(badID3FilesLog, CR);
+		break;
+	case 3:
+		writeField(nonMp3FilesLog, currentTag.m_filePath);
+		writeField(nonMp3FilesLog, CR);
 		break;
 	default:
 		break;
@@ -87,8 +91,3 @@ bool filesOpen(std::ofstream& csvFile, std::ofstream& nonID3FilesLog, std::ofstr
 	return retVal;
 }
 
-
-bool isMp3(hxlstr input_file_ext) {
-	bool retVal = (input_file_ext == ".mp3") || (input_file_ext == ".MP3") || (input_file_ext == ".Mp3");
-	return retVal;
-}

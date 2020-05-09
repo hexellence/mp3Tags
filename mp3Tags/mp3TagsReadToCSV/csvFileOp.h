@@ -15,5 +15,4 @@ void writeField(std::ofstream& file, const hxlstr& field);
 void writeNextLine(std::ofstream& file, Mp3Tag& mp3);
 bool prepareFiles(std::ofstream& csvFile, std::ofstream& nonID3FilesLog, std::ofstream& badID3FilesLog, std::ofstream& nonMp3FilesLog);
 void closeFiles(std::ofstream& csvFile, std::ofstream& nonID3FilesLog, std::ofstream& badID3FilesLog, std::ofstream& nonMp3FilesLog);
-bool isMp3(hxlstr input_file_ext);
 void writeLogs(Mp3Tag& currentTag, std::ofstream& nonID3FilesLog, std::ofstream& badID3FilesLog, std::ofstream& nonMp3FilesLog);

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <filesystem>
 #include "hxlstr.h"
 #include "Mp3Tag.h"
@@ -17,7 +16,7 @@ const char nonMp3FilesLogFileName[] = "D:\\TUNCA_3_music\\nonMp3FilesLog.txt";
 const char output_file_name[] = { "D:\\TUNCA_3_music\\musicArchive.csv" };
 
 const char archivePath[] = { "D:\\TUNCA_3_music\\Music" };
-//const char archivePath[] = { "D:\\mp3\\mp3" };
+
 
 int main()
 {	
@@ -26,7 +25,7 @@ int main()
 	ofstream badID3FilesLog;
 	ofstream nonMp3FilesLog;	
 
-	csvFile.open(output_file_name);
+	csvFile.open(output_file_name, std::ios::binary);
 	nonID3FilesLog.open(nonID3FilesLogFileName, std::ios::binary);
 	badID3FilesLog.open(badID3FilesLogFileName, std::ios::binary);
 	nonMp3FilesLog.open(nonMp3FilesLogFileName, std::ios::binary);
@@ -35,20 +34,17 @@ int main()
 
 		for (auto& p : std::filesystem::recursive_directory_iterator(archivePath)) {
 
-			hxlstr input_file_ext = p.path().extension().string().c_str();
+			hxlstr input_file_ext = p.path().extension().string().c_str();	
 
-			if (isMp3(input_file_ext) == true) {
-
+			if (isMp3(p.path()) || isWma(p.path())) {
 				Mp3Tag currentTag(p.path());
 				writeNextLine(csvFile, currentTag);
 				writeLogs(currentTag, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog);
-
-			}//if mp3 file
-			
-		}//for all files
+			}//if mp3 or wma file			
+		}//for all files and folders
 		closeFiles(csvFile, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog);
 	}//if csv file open
 	else {
-		cout << ".csv file cannot be opened" << endl;
+		cout << ".csv one or more files cannot be opened" << endl;
 	}
 }
