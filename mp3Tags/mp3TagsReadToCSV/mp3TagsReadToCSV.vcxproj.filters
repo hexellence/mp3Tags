@@ -47,10 +47,10 @@
     <ClInclude Include="csvFileOp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ID3V1Tagg.h">
+    <ClInclude Include="ID3V1Genre.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ID3V1Genre.h">
+    <ClInclude Include="ID3V1Tag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

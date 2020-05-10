@@ -161,7 +161,7 @@
   <ItemGroup>
     <ClInclude Include="csvFileOp.h" />
     <ClInclude Include="ID3V1Genre.h" />
-    <ClInclude Include="ID3V1Tagg.h" />
+    <ClInclude Include="ID3V1Tag.h" />
     <ClInclude Include="Mp3Frame.h" />
     <ClInclude Include="ID3V2Tag.h" />
     <ClInclude Include="Mp3Tag.h" />

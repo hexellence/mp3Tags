@@ -4,7 +4,7 @@
 #include <iostream>
 #include "hxlstr.h"
 #include "ID3V2Tag.h"
-#include "ID3V1Tagg.h"
+#include "ID3V1Tag.h"
 
 using namespace hxl;
 
