@@ -47,5 +47,11 @@
     <ClInclude Include="csvFileOp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ID3V1Tagg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ID3V1Genre.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

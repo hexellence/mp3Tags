@@ -3,12 +3,23 @@
 #include <filesystem>
 #include "hxlstr.h"
 #include "ID3V2Tag.h"
+#include "ID3V1Tagg.h"
 #include "Mp3Frame.h"
 
 
 class Mp3Tag
 {
 public:
+
+	enum class STATUS{
+		MP3TAG_SUCCESS,
+		MP3TAG_NOT_MP3,
+		MP3TAG_ILLFORMED_ID3V1,
+		MP3TAG_ILLFORMED_ID3V2,
+		MP3TAG_NO_ID3V1
+	};
+
+
 	Mp3Tag() = delete;
 	Mp3Tag(std::filesystem::path filePath);
 	~Mp3Tag();	
@@ -23,14 +34,13 @@ public:
 	hxlstr m_filePath;
 	hxlstr m_trackNo;
 	hxlstr m_genre;
-	int m_status;
+	STATUS m_status;
 
 private:
 	int m_size;
-	ID3V2FRM* m_firstFrame;
-	ID3V2HDR* m_id3Header;
+	ID3V2FRM* m_firstFrame;	
 	
-	bool getID3V2Header(std::ifstream& mp3File, ID3V2HDR* hdr);
+	bool getID3Header(std::filesystem::path, ID3V2HDR* hdrv2, ID3V1HDR* hdrv1);
 	ID3V2FRM* getNextFrame(ID3V2FRM* currentFrame);
 	void iterateFrames();
 

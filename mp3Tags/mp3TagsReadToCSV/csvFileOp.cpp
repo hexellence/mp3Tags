@@ -62,15 +62,16 @@ void writeNextLine(std::ofstream& file, Mp3Tag& mp3) {
 void writeLogs(Mp3Tag& currentTag, std::ofstream& nonID3FilesLog, std::ofstream& badID3FilesLog, std::ofstream& nonMp3FilesLog) {
 
 	switch (currentTag.m_status) {
-	case 1:
+	case Mp3Tag::STATUS::MP3TAG_NO_ID3V1:
 		writeField(nonID3FilesLog, currentTag.m_filePath);
 		writeField(nonID3FilesLog, CR);
 		break;
-	case 2:
+	case Mp3Tag::STATUS::MP3TAG_ILLFORMED_ID3V1:
+	case Mp3Tag::STATUS::MP3TAG_ILLFORMED_ID3V2:
 		writeField(badID3FilesLog, currentTag.m_filePath);
 		writeField(badID3FilesLog, CR);
 		break;
-	case 3:
+	case Mp3Tag::STATUS::MP3TAG_NOT_MP3:
 		writeField(nonMp3FilesLog, currentTag.m_filePath);
 		writeField(nonMp3FilesLog, CR);
 		break;

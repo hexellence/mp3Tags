@@ -23,7 +23,6 @@ Mp3Frame::Mp3Frame(ID3V2FRM* frame) : m_str(""), m_id("") {
 				else {
 					std::cout << "Mp3Frame::Mp3Frame: Illegal encoding type" << std::endl;
 				}
-					
 			}
 		}
 	}

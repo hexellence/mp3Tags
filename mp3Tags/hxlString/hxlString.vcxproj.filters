@@ -26,5 +26,8 @@
     <ClInclude Include="hxlstr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\HTL\trim\trim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

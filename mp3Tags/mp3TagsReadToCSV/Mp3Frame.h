@@ -4,6 +4,9 @@
 #include <iostream>
 #include "hxlstr.h"
 #include "ID3V2Tag.h"
+#include "ID3V1Tagg.h"
+
+using namespace hxl;
 
 class Mp3Frame {
 
@@ -16,7 +19,7 @@ public:
 	Mp3Frame();
 
 	//constructor from buffer
-	Mp3Frame(ID3V2FRM* frame);
+	Mp3Frame(ID3V2FRM* frame);	
 
 	//constructor from normal char array
 	Mp3Frame(const char* init, const char* id);
