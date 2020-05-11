@@ -39,7 +39,8 @@ public:
 private:
 	int m_size;
 	ID3V2FRM* m_firstFrame;	
-	
+	void getID3v1Data(ID3V1HDR& hdr);
+	void getID3v2Data(std::filesystem::path filePath, ID3V2HDR& hdr);
 	bool getID3Header(std::filesystem::path, ID3V2HDR* hdrv2, ID3V1HDR* hdrv1);
 	ID3V2FRM* getNextFrame(ID3V2FRM* currentFrame);
 	void iterateFrames();

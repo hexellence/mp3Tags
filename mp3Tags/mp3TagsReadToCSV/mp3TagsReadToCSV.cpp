@@ -34,8 +34,6 @@ int main()
 
 		for (auto& p : std::filesystem::recursive_directory_iterator(archivePath)) {
 
-			hxlstr input_file_ext = p.path().extension().string().c_str();	
-
 			if (isMp3(p.path()) || isWma(p.path())) {
 				Mp3Tag currentTag(p.path());
 				writeNextLine(csvFile, currentTag);

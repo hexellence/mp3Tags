@@ -27,10 +27,10 @@
     <ClCompile Include="Mp3Tag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\hxlString\hxlstr.cpp">
+    <ClCompile Include="csvFileOp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="csvFileOp.cpp">
+    <ClCompile Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ID3V1Tag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

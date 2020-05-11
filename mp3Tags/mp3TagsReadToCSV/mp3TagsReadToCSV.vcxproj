@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Projects\Project016_Cpp\mp3Tags\trunk\mp3Tags\hxlString;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Projects\Project016_Cpp\mp3Tags\trunk\mp3Tags\hxlString;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -151,7 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\hxlString\hxlstr.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.cpp" />
     <ClCompile Include="csvFileOp.cpp" />
     <ClCompile Include="Mp3Frame.cpp" />
     <ClCompile Include="ID3V2Tag.cpp" />
@@ -159,6 +159,7 @@
     <ClCompile Include="mp3TagsReadToCSV.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.h" />
     <ClInclude Include="csvFileOp.h" />
     <ClInclude Include="ID3V1Genre.h" />
     <ClInclude Include="ID3V1Tag.h" />
