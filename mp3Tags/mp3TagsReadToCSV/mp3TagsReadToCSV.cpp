@@ -16,7 +16,7 @@ const char nonMp3FilesLogFileName[] = "D:\\TUNCA_3_music\\nonMp3FilesLog.txt";
 //list of Mp3s
 const char output_file_name[] = { "D:\\TUNCA_3_music\\musicArchive.csv" };
 
-const char archivePath[] = { "D:\\TUNCA_3_music\\Music" };
+const char archivePath[] = { "D:\\mp3\\mp3" };
 
 
 int main()

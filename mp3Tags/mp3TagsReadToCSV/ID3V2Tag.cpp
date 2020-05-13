@@ -1,5 +1,6 @@
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include "ID3V2Tag.h"
 
 
@@ -9,7 +10,12 @@ void setID3v2Header(std::filesystem::path filePath, char* id3Tag, int tagSize)
 {
 	long long sourceSize = getFileSize(filePath);
 
-	std::filesystem::path tempFilePath = "temp.mp3";
+	std::filesystem::path tempFilePath = filePath.parent_path();
+	std::filesystem::path tempFileName = "/HXL_"; 
+		
+	tempFileName += filePath.filename();
+	tempFilePath += tempFileName;	
+
 	std::ofstream tempFile;
 	tempFile.open(tempFilePath, std::ios::binary);
 

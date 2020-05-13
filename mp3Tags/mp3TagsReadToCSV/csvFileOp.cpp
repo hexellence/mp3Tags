@@ -54,6 +54,12 @@ void writeNextLine(std::ofstream& file, Mp3Tag& mp3) {
 	writeField(file, SEPARATOR);
 	writeField(file, mp3.m_artist2.m_str);
 	writeField(file, SEPARATOR);
+	writeField(file, mp3.m_year.m_str);
+	writeField(file, SEPARATOR);
+	writeField(file, mp3.m_genre.m_str);
+	writeField(file, SEPARATOR);
+	writeField(file, mp3.m_comment.m_str);
+	writeField(file, SEPARATOR);
 	writeField(file, mp3.m_filePath);
 	writeField(file, CR);
 }

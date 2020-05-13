@@ -10,7 +10,7 @@ const hxlstr CR{ "\r" };
 const hxlstr SPACE{ " " };
 
 
-const hxlstr csvColumns[]{ "File Name", SEPARATOR, "Title", SEPARATOR, "Album", SEPARATOR, "Artist", SEPARATOR, "Band", SEPARATOR, "File Path", "\r" };
+const hxlstr csvColumns[]{ "FNME", SEPARATOR, "TIT2", SEPARATOR, "TALB", SEPARATOR, "TPE1", SEPARATOR, "TPE2", SEPARATOR, "TYER", SEPARATOR,"TCON", SEPARATOR, "COMM", SEPARATOR, "FPTH", "\r" };
 
 void writeColumns(std::ofstream& file);
 void writeField(std::ofstream& file, const hxlstr& field);

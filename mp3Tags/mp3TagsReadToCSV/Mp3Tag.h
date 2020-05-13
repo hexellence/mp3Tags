@@ -21,7 +21,7 @@ public:
 
 	Mp3Tag() = delete;
 	Mp3Tag(std::filesystem::path filePath);
-	int createID3Tag(char* id3TagOut, Mp3Frame* frames, int numOfFrames);
+	
 	~Mp3Tag();	
 
 
@@ -47,5 +47,5 @@ private:
 
 };
 
-
+int createID3Tag(char* id3TagOut, Mp3Frame* frames, int numOfFrames);
 

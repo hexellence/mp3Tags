@@ -2,6 +2,8 @@
 #include "Mp3Frame.h"
 #include "fileSys.h"
 
+using namespace hxl;
+
 Mp3Frame::Mp3Frame() : m_id(""), m_str(""){
 
 }
@@ -33,6 +35,8 @@ Mp3Frame::Mp3Frame(ID3V2FRM* frame) : m_str(""), m_id("") {
 	}
 }
 
+
+Mp3Frame::Mp3Frame(hxlstr& val, hxlstr& id) : m_str(val), m_id(id) { }
 
 //destructor
 Mp3Frame::~Mp3Frame() {

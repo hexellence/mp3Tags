@@ -23,7 +23,7 @@ public:
 	Mp3Frame(ID3V2FRM* frame);	
 
 	//constructor from normal char array
-	Mp3Frame(const char* init, const char* id);
+	Mp3Frame(hxlstr& val, hxlstr& id);
 
 	//copy constructor
 	Mp3Frame(const Mp3Frame& other) = delete;

@@ -158,7 +158,7 @@ void Mp3Tag::getID3v2Data(std::filesystem::path filePath, ID3V2HDR& hdr) {
 	}
 }
 
-int Mp3Tag::createID3Tag(char* id3TagOut, Mp3Frame* frames, int numOfFrames) {
+int createID3Tag(char* id3TagOut, Mp3Frame* frames, int numOfFrames) {
 	int tagsize = 0;
 		
 	if ((id3TagOut != nullptr) && (frames != nullptr)) {
