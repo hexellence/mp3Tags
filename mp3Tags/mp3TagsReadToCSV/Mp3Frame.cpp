@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "Mp3Frame.h"
+#include "fileSys.h"
 
 Mp3Frame::Mp3Frame() : m_id(""), m_str(""){
 
@@ -53,4 +54,46 @@ const hxlstr& Mp3Frame::id() {
 
 const hxlstr& Mp3Frame::text() {
 	return m_str;
+}
+
+//Helpers
+
+int createID3v2Frame(Mp3Frame& frameIn, char* frameOut) {
+	int frmsize = 0;
+
+	if (frameOut != nullptr) {
+		ID3V2FRM* p_id3V2Frm = (ID3V2FRM*)frameOut;
+		hxlstrcopy(p_id3V2Frm->id, frameIn.id());
+		frmsize = frmsize + sizeof(p_id3V2Frm->id);		
+
+		p_id3V2Frm[0].flags[0] = 0x00;
+		p_id3V2Frm[0].flags[1] = 0x00;
+		frmsize = frmsize + sizeof(p_id3V2Frm->flags);
+
+		//BOM prepare
+		p_id3V2Frm->payload.enc = 0x01;
+		frmsize = frmsize + sizeof(p_id3V2Frm->payload.enc);
+		//BOM 
+		char* p_BOM = &p_id3V2Frm->payload.txt;
+		memcpy(p_BOM, BOM, 2);
+		frmsize = frmsize + 2;
+
+		// to ease coding have a pointer to the actual payload
+		char* p_Payload = &p_BOM[2];
+
+		// copy album name
+		memcpy(p_Payload, (char*)frameIn.text().c_str(), frameIn.text().size());
+		frmsize = frmsize + frameIn.text().size();
+
+		// payload size field
+		frmsize = frmsize + sizeof(p_id3V2Frm->payloadSize);
+
+		//set payload size
+		uint32_t payloadSize = frameIn.text().size() + 3;
+		memcpy(p_id3V2Frm->payloadSize, (uint8_t*)&payloadSize, 4);
+		
+		//convert endianness
+		convertEndianness(p_id3V2Frm->payloadSize, 4);				
+	}
+	return frmsize;
 }

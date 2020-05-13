@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.cpp" />
+    <ClCompile Include="AudioFile.cpp" />
     <ClCompile Include="csvFileOp.cpp" />
     <ClCompile Include="fileSys.cpp" />
     <ClCompile Include="ID3.cpp" />
@@ -163,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.h" />
+    <ClInclude Include="AudioFile.h" />
     <ClInclude Include="csvFileOp.h" />
     <ClInclude Include="fileSys.h" />
     <ClInclude Include="ID3.h" />

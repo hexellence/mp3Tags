@@ -11,11 +11,10 @@ using namespace hxl;
 class Mp3Frame {
 
 private:
-	hxlstr m_str;
-	hxlstr m_id;
 
 public:
-
+	hxlstr m_str;
+	hxlstr m_id;
 
 	//default constructor
 	Mp3Frame();
@@ -45,5 +44,5 @@ public:
 };
 
 
-
+int createID3v2Frame(Mp3Frame& frameIn, char* frameOut);
 

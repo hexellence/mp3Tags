@@ -4,6 +4,7 @@
 #include "hxlstr.h"
 #include "Mp3Tag.h"
 #include "csvFileOp.h"
+#include "filesys.h"
 
 using namespace std;
 
@@ -36,6 +37,7 @@ int main()
 
 			if (isMp3(p.path()) || isWma(p.path())) {
 				Mp3Tag currentTag(p.path());
+				
 				writeNextLine(csvFile, currentTag);
 				writeLogs(currentTag, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog);
 			}//if mp3 or wma file			

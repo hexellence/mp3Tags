@@ -46,13 +46,13 @@ void writeNextLine(std::ofstream& file, Mp3Tag& mp3) {
 
 	writeField(file, mp3.m_fileName);	
 	writeField(file, SEPARATOR);
-	writeField(file, mp3.m_title);
+	writeField(file, mp3.m_title.m_str);
 	writeField(file, SEPARATOR);
-	writeField(file, mp3.m_album);
+	writeField(file, mp3.m_album.m_str);
 	writeField(file, SEPARATOR);
-	writeField(file, mp3.m_artist1);
+	writeField(file, mp3.m_artist1.m_str);
 	writeField(file, SEPARATOR);
-	writeField(file, mp3.m_artist2);
+	writeField(file, mp3.m_artist2.m_str);
 	writeField(file, SEPARATOR);
 	writeField(file, mp3.m_filePath);
 	writeField(file, CR);

@@ -51,28 +51,28 @@ void Mp3Tag::iterateFrames() {
 			Mp3Frame curFrame = Mp3Frame(p_id3v2CurrFrm);
 
 			if (curFrame.id() == "TYER") {
-				m_year = curFrame.text();
+				m_year = curFrame;
 			}
 			else if (curFrame.id() == "TALB") {
-				m_album = curFrame.text();
+				m_album = curFrame;
 			}
 			else if (curFrame.id() == "TIT2") {
-				m_title = curFrame.text();
+				m_title = curFrame;
 			}
 			else if (curFrame.id() == "TRCK") {
-				m_trackNo = curFrame.text();
+				m_trackNo = curFrame;
 			}
 			else if (curFrame.id() == "TCON") {
-				m_genre = curFrame.text();
+				m_genre = curFrame;
 			}
 			else if (curFrame.id() == "TPE2") {
-				m_artist1 = curFrame.text();
+				m_artist1 = curFrame;
 			}
 			else if (curFrame.id() == "TPE1") {
-				m_artist2 = curFrame.text();
+				m_artist2 = curFrame;
 			}
 
-			p_id3v2CurrFrm = getNextFrame(p_id3v2CurrFrm);
+			p_id3v2CurrFrm = getNextFrame(p_id3v2CurrFrm);			
 
 		}	//while
 	}//if size is non zero
@@ -84,35 +84,43 @@ void Mp3Tag::getID3v1Data(ID3V1HDR& hdr) {
 	hxlstr tag((const uint8_t*)hdr.tag, 3, hxlstr::ENC::ASCII);
 
 	if (tag == "TAG") {
-		if (m_title.size() == 0) {
-			m_title = hxlstr((uint8_t*)hdr.title, sizeof(hdr.title), hxlstr::ENC::ASCII);
-			m_title.trim();
+		if (m_title.m_str.size() == 0) {
+			m_title.m_str = hxlstr((uint8_t*)hdr.title, sizeof(hdr.title), hxlstr::ENC::ASCII);
+			m_title.m_str.trim();
+			m_title.m_id = "TIT2";
 		}
-		if (m_album.size() == 0) {
-			m_album = hxlstr((uint8_t*)hdr.album, sizeof(hdr.album), hxlstr::ENC::ASCII);
-			m_album.trim();
+		if (m_album.m_str.size() == 0) {
+			m_album.m_str = hxlstr((uint8_t*)hdr.album, sizeof(hdr.album), hxlstr::ENC::ASCII);
+			m_album.m_str.trim();
+			m_album.m_id = "TALB";
 		}
-		if (m_artist1.size() == 0) {
-			m_artist1 = hxlstr((uint8_t*)hdr.artist, sizeof(hdr.artist), hxlstr::ENC::ASCII);
-			m_artist1.trim();
+		if (m_artist1.m_str.size() == 0) {
+			m_artist1.m_str = hxlstr((uint8_t*)hdr.artist, sizeof(hdr.artist), hxlstr::ENC::ASCII);
+			m_artist1.m_str.trim();
+			m_artist1.m_id = "TPE2";
 		}
-		if (m_artist2.size() == 0) {
+		if (m_artist2.m_str.size() == 0) {
 			m_artist2 = m_artist1;
+			m_artist2.m_id = "TPE1";
 		}
-		if (m_year.size() == 0) {
-			m_year = hxlstr((const uint8_t*)hdr.year, 4, hxlstr::ENC::ASCII);
-			m_year.trim();
+		if (m_year.m_str.size() == 0) {
+			m_year.m_str = hxlstr((const uint8_t*)hdr.year, 4, hxlstr::ENC::ASCII);
+			m_year.m_str.trim();
+			m_year.m_id = "TYER";
 		}
-		if (m_comment.size() == 0) {
-			m_comment = hxlstr((uint8_t*)hdr.comment, sizeof(hdr.comment), hxlstr::ENC::ASCII);
-			m_comment.trim();
+		if (m_comment.m_str.size() == 0) {
+			m_comment.m_str = hxlstr((uint8_t*)hdr.comment, sizeof(hdr.comment), hxlstr::ENC::ASCII);
+			m_comment.m_str.trim();
+			m_comment.m_id = "COMM";
 		}
-		if (m_trackNo.size() == 0) {
-			m_trackNo = hxlstr((uint8_t*)hdr.track, sizeof(hdr.track), hxlstr::ENC::ASCII);
-			m_trackNo.trim();
+		if (m_trackNo.m_str.size() == 0) {
+			m_trackNo.m_str = hxlstr((uint8_t*)hdr.track, sizeof(hdr.track), hxlstr::ENC::ASCII);
+			m_trackNo.m_str.trim();
+			m_trackNo.m_id = "TRCK";
 		}
-		if (m_genre.size() == 0) {
-			m_genre = genre_table[hdr.genre];
+		if (m_genre.m_str.size() == 0) {
+			m_genre.m_str = genre_table[hdr.genre];
+			m_genre.m_id = "TCON";
 		}
 	}
 }
@@ -150,12 +158,11 @@ void Mp3Tag::getID3v2Data(std::filesystem::path filePath, ID3V2HDR& hdr) {
 	}
 }
 
-int Mp3Tag::createID3Tag(char* id3Tag) {
+int Mp3Tag::createID3Tag(char* id3TagOut, Mp3Frame* frames, int numOfFrames) {
 	int tagsize = 0;
-	
-	char16_t deneme[] = u"Deneme";
-	if (id3Tag != nullptr) {
-		ID3V2HDR* p_id3V2Tag = (ID3V2HDR*)id3Tag;		
+		
+	if ((id3TagOut != nullptr) && (frames != nullptr)) {
+		ID3V2HDR* p_id3V2Tag = (ID3V2HDR*)id3TagOut;
 		memcpy(&p_id3V2Tag->id, "ID3", 3);
 		tagsize = tagsize + sizeof(p_id3V2Tag->id);
 
@@ -165,48 +172,23 @@ int Mp3Tag::createID3Tag(char* id3Tag) {
 
 		p_id3V2Tag->flags = 0x00;
 		tagsize = tagsize + sizeof(p_id3V2Tag->flags);
+				
+		int p_id3V2NextFrm = (int)&p_id3V2Tag->firstFrame;
 
-		p_id3V2Tag->size[0] = 0;
-		p_id3V2Tag->size[1] = 0;
-		p_id3V2Tag->size[2] = 0;
-		p_id3V2Tag->size[3] = 0;
+		for (int i = 0; i < numOfFrames; ++i) {
+			
+			int frameSize = createID3v2Frame(frames[i], (char*)p_id3V2NextFrm);
+			p_id3V2NextFrm += frameSize;
+			tagsize += frameSize;
+		}	
+		//size field itself
 		tagsize = tagsize + sizeof(p_id3V2Tag->size);
 
-		ID3V2FRM* p_id3V2Frm = &p_id3V2Tag->firstFrame;
+		uint32_t tagsizeToWrite = tagsize - 10; //the header is not included when writing
+		memcpy(p_id3V2Tag->size, (uint8_t*)&tagsizeToWrite, 4);
 
-		memcpy(&p_id3V2Frm[0].id, "TALB", 4);
-		tagsize = tagsize + sizeof(p_id3V2Frm->id);
-
-		p_id3V2Frm[0].payloadSize[0] = 0;
-		p_id3V2Frm[0].payloadSize[1] = 0;
-		p_id3V2Frm[0].payloadSize[2] = 0;
-		p_id3V2Frm[0].payloadSize[3] = 0;
-		tagsize = tagsize + sizeof(p_id3V2Frm->payloadSize);
-
-		p_id3V2Frm[0].flags[0] = 0x00;
-		p_id3V2Frm[0].flags[1] = 0x00;
-		tagsize = tagsize + sizeof(p_id3V2Frm->flags);
-
-		//BOM prepare
-		p_id3V2Frm[0].payload.enc = 0x01;
-		tagsize = tagsize + sizeof(p_id3V2Frm->payload.enc);
-		//BOM 
-		char* p_BOM = &p_id3V2Frm[0].payload.txt;
-		memcpy(p_BOM, BOM, 2);
-		tagsize = tagsize + 2;
-
-		// to ease coding have a pointer to the text
-		char* p_Data = &p_BOM[2];
-
-		// copy album name
-		memcpy(p_Data, (char*)deneme, 12);
-		tagsize = tagsize + 12;
-
-		//set payload size
-		p_id3V2Tag->firstFrame.payloadSize[3] = 12 + 3;//3 comes from the 3 byte BOM field
-
-		//set the tag size
-		p_id3V2Tag->size[3] = tagsize - 10;		
+		//convert endianness
+		convertEndianness(p_id3V2Tag->size, 4);
 	}
 	return tagsize;
 }

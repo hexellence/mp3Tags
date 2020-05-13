@@ -21,20 +21,20 @@ public:
 
 	Mp3Tag() = delete;
 	Mp3Tag(std::filesystem::path filePath);
-	int createID3Tag(char* id3Tag);
+	int createID3Tag(char* id3TagOut, Mp3Frame* frames, int numOfFrames);
 	~Mp3Tag();	
 
 
-	hxlstr m_title;
-	hxlstr m_album;
-	hxlstr m_artist1;
-	hxlstr m_artist2;
-	hxlstr m_year;
-	hxlstr m_comment;
+	Mp3Frame m_title;
+	Mp3Frame m_album;
+	Mp3Frame m_artist1;
+	Mp3Frame m_artist2;
+	Mp3Frame m_year;
+	Mp3Frame m_comment;
 	hxlstr m_fileName;
 	hxlstr m_filePath;
-	hxlstr m_trackNo;
-	hxlstr m_genre;
+	Mp3Frame m_trackNo;
+	Mp3Frame m_genre;
 	STATUS m_status;
 
 private:
