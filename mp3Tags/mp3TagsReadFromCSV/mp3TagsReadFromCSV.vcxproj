@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{C5510FF3-1CE1-41DB-87B8-F086114EF85D}</ProjectGuid>
+    <ProjectGuid>{BF6F4E77-9710-437E-8935-D304E7B2C658}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>mp3TagsReadToCSV</RootNamespace>
+    <RootNamespace>mp3TagsReadFromCSV</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -90,8 +90,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Projects\Project016_Cpp\mp3Tags\trunk\mp3Tags\mp3TagsReadToCSV;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,8 +122,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Projects\Project016_Cpp\mp3Tags\trunk\mp3Tags\mp3TagsReadToCSV;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,25 +152,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.cpp" />
-    <ClCompile Include="csvFileOp.cpp" />
-    <ClCompile Include="fileSys.cpp" />
-    <ClCompile Include="ID3.cpp" />
-    <ClCompile Include="ID3V1Tag.cpp" />
-    <ClCompile Include="Mp3Frame.cpp" />
-    <ClCompile Include="ID3V2Tag.cpp" />
-    <ClCompile Include="Mp3Tag.cpp" />
-    <ClCompile Include="mp3TagsReadToCSV.cpp" />
+    <ClCompile Include="mp3TagsReadFromCSV.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.h" />
-    <ClInclude Include="csvFileOp.h" />
-    <ClInclude Include="fileSys.h" />
-    <ClInclude Include="ID3.h" />
-    <ClInclude Include="ID3V1Genre.h" />
-    <ClInclude Include="ID3V1Tag.h" />
-    <ClInclude Include="Mp3Frame.h" />
-    <ClInclude Include="ID3V2Tag.h" />
-    <ClInclude Include="Mp3Tag.h" />
+    <ClInclude Include="..\mp3TagsReadToCSV\csvFileOp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

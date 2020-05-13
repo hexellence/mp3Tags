@@ -1,8 +1,9 @@
 #include <algorithm>
 #include "Mp3Frame.h"
 
-Mp3Frame::Mp3Frame() : m_str("") { }
+Mp3Frame::Mp3Frame() : m_id(""), m_str(""){
 
+}
 
 //constructor from raw id3v2 tag in memory
 Mp3Frame::Mp3Frame(ID3V2FRM* frame) : m_str(""), m_id("") {
@@ -32,27 +33,16 @@ Mp3Frame::Mp3Frame(ID3V2FRM* frame) : m_str(""), m_id("") {
 }
 
 
-//constructor from normal char array
-Mp3Frame::Mp3Frame(const char* init, const char* id) : m_str(""), m_id("") {
-	if ((init != nullptr) && (id != nullptr)) {
-		m_str = hxlstr(init);
-		m_id = hxlstr(id);
-	}
-	else {
-		throw std::string("no array address!");
-	}
-}
-
-
-//copy constructor
-Mp3Frame::Mp3Frame(const Mp3Frame& other) : m_str(other.m_str), m_id(other.m_id) {
-
-}
-
-
 //destructor
 Mp3Frame::~Mp3Frame() {
 
+}
+
+const Mp3Frame& Mp3Frame::operator=(const Mp3Frame& other) {
+	
+	m_str = other.m_str;
+	m_id = other.m_id;	
+	return *this;
 }
 
 
@@ -63,20 +53,4 @@ const hxlstr& Mp3Frame::id() {
 
 const hxlstr& Mp3Frame::text() {
 	return m_str;
-}
-
-
-//assignment operator
-const Mp3Frame& Mp3Frame::operator=(const Mp3Frame& other) {
-	m_str = other.m_str;
-	m_id = other.m_id;
-	return *this;
-}
-
-
-//assignment operator from char16_t
-const Mp3Frame& Mp3Frame::operator=(const char16_t* other) {
-	m_str = hxlstr(other);
-	m_id = "";
-	return *this;
 }

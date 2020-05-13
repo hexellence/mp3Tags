@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+#include <filesystem>
+#include <fstream>
 
 //  ID3V2
 //	+---------------------------- - +
@@ -39,10 +41,12 @@ struct ID3V2HDR {
 
 struct ID3V2TAG {
 	ID3V2HDR hdr;
-	ID3V2HDR firstFrame;
+	ID3V2FRM secondFrame;
 };
 
 #pragma pack(pop)
+
+const uint8_t mp3AudioHeader[2]{ 0xFF, 0xFB };
 
 enum ID3_FrameID
 {
@@ -239,3 +243,9 @@ const uint8_t* getTextAddress(const ID3V2FRM* frame);
 int calcID3FieldSize(const uint8_t* number);
 int GetID3v2PayloadSize(const ID3V2FRM* frame);
 bool isIdValid(const ID3V2FRM* frame);
+bool getID3v2Header(std::filesystem::path filePath, ID3V2HDR* hdrv2);
+ID3V2FRM* getNextFrame(ID3V2FRM* currentFrame);
+void setID3v2Header(std::filesystem::path filePath, char* id3Tag, int tagSize);
+int getAudioOffset(std::filesystem::path filePath);
+int getAudioOffset(std::ifstream& mp3File);
+std::ifstream::pos_type getFileSize(std::filesystem::path filename);

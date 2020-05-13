@@ -23,7 +23,7 @@ bool prepareFiles(std::ofstream& csvFile, std::ofstream& nonID3FilesLog, std::of
 
 void writeColumns(std::ofstream& file) {
 	
-	const hxlstr csvColumns[]{ "File Name", SEPARATOR, "Title", SEPARATOR, "Album", SEPARATOR, "Artist", SEPARATOR, "Band", SEPARATOR, "File Path", "\r" };
+	
 	file.write(BOM, 2);
 	for (auto columnName : csvColumns) {
 		file.write(columnName.c_str(), columnName.size());

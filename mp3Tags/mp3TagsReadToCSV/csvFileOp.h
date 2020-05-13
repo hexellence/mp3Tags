@@ -3,12 +3,14 @@
 #include <fstream>
 #include "hxlstr.h"
 #include "Mp3Tag.h"
+#include "filesys.h"
 
 const hxlstr SEPARATOR{ "\t" };
 const hxlstr CR{ "\r" };
 const hxlstr SPACE{ " " };
-const char BOM[]{ "\xff\xfe" };
 
+
+const hxlstr csvColumns[]{ "File Name", SEPARATOR, "Title", SEPARATOR, "Album", SEPARATOR, "Artist", SEPARATOR, "Band", SEPARATOR, "File Path", "\r" };
 
 void writeColumns(std::ofstream& file);
 void writeField(std::ofstream& file, const hxlstr& field);

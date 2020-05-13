@@ -2,8 +2,7 @@
 #include <fstream>
 #include <filesystem>
 #include "hxlstr.h"
-#include "ID3V2Tag.h"
-#include "ID3V1Tag.h"
+#include "ID3.h"
 #include "Mp3Frame.h"
 
 
@@ -22,7 +21,9 @@ public:
 
 	Mp3Tag() = delete;
 	Mp3Tag(std::filesystem::path filePath);
+	int createID3Tag(char* id3Tag);
 	~Mp3Tag();	
+
 
 	hxlstr m_title;
 	hxlstr m_album;
@@ -40,13 +41,11 @@ private:
 	int m_size;
 	ID3V2FRM* m_firstFrame;	
 	void getID3v1Data(ID3V1HDR& hdr);
-	void getID3v2Data(std::filesystem::path filePath, ID3V2HDR& hdr);
-	bool getID3Header(std::filesystem::path, ID3V2HDR* hdrv2, ID3V1HDR* hdrv1);
-	ID3V2FRM* getNextFrame(ID3V2FRM* currentFrame);
+	void getID3v2Data(std::filesystem::path filePath, ID3V2HDR& hdr);	
 	void iterateFrames();
+	
 
 };
 
-bool isMp3(std::filesystem::path filePath);
-bool isWma(std::filesystem::path filePath);
+
 

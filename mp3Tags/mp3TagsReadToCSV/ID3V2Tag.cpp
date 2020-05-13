@@ -1,5 +1,90 @@
+#include <filesystem>
+#include <fstream>
 #include "ID3V2Tag.h"
 
+
+
+
+void setID3v2Header(std::filesystem::path filePath, char* id3Tag, int tagSize)
+{
+	long long sourceSize = getFileSize(filePath);
+
+	std::filesystem::path tempFilePath = "temp.mp3";
+	std::ofstream tempFile;
+	tempFile.open(tempFilePath, std::ios::binary);
+
+	std::ifstream mp3File;
+	mp3File.open(filePath, std::ios::binary);
+		
+	long long offset = getAudioOffset(mp3File);
+	int audioSize = sourceSize - offset;
+
+	char* audioContent = new char[audioSize];
+	mp3File.seekg(offset, std::ios::beg);
+	mp3File.read(audioContent, audioSize);
+	
+	tempFile.write(id3Tag, tagSize);	//first write the tag
+	tempFile.write(audioContent, audioSize);	
+	delete[] audioContent;
+	mp3File.close();
+	tempFile.close();
+}
+
+
+std::ifstream::pos_type getFileSize(std::filesystem::path filename)
+{
+	std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
+	return in.tellg();
+}
+
+int getAudioOffset(std::filesystem::path filePath) 
+{
+	std::ifstream mp3File;
+	mp3File.open(filePath, std::ios::binary);
+	int offset = getAudioOffset(mp3File);
+	mp3File.close();
+	return offset;
+}
+
+int getAudioOffset(std::ifstream& mp3File)
+{
+	int offset = 0;	
+	
+	if (mp3File.is_open()) {
+		uint8_t bytes[2]{};
+
+		while ((bytes[0] != mp3AudioHeader[0]) || (bytes[1] != mp3AudioHeader[1])) {
+			mp3File.read((char*)&bytes[0], 1);	//only read header first for effectiveness
+			offset++;
+			if (bytes[0] == mp3AudioHeader[0]) {
+				mp3File.read((char*)&bytes[1], 1);	//only read header first for effectiveness				
+				offset++;
+			}
+		}
+	}
+	if (offset > 3) {
+		offset = offset - 2;
+	}
+	return offset;
+}
+
+bool getID3v2Header(std::filesystem::path filePath, ID3V2HDR* hdr) {
+	bool retVal = false;
+	std::ifstream mp3File;
+	
+	mp3File.open(filePath, std::ios::binary);
+	if (mp3File.is_open()) {
+
+		mp3File.seekg(std::ios::beg);
+		mp3File.read((char*)hdr, sizeof(ID3V2HDR));	//only read header first for effectiveness				
+		retVal = true;
+		mp3File.close();
+	}
+	else {
+		retVal = false;
+	}
+	return retVal;
+}
 
 
 const uint8_t* getTextAddress(const ID3V2FRM* frame) {
@@ -73,4 +158,17 @@ bool isIdValid(const ID3V2FRM* frame) {
 		//std::cout << "isIdValid: illegal frame address" << std::endl;
 	}
 	return idFound;
+}
+
+ID3V2FRM* getNextFrame(ID3V2FRM* currentFrame) {
+
+	ID3V2FRM* nextFrame = nullptr;
+	if (currentFrame != nullptr) {
+
+		int payloadSize = calcID3FieldSize(currentFrame->payloadSize);
+
+		nextFrame = (ID3V2FRM*)((int)currentFrame + 10 + payloadSize);
+	}
+
+	return nextFrame;
 }

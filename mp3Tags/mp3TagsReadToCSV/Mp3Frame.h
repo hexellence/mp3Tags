@@ -15,6 +15,8 @@ private:
 	hxlstr m_id;
 
 public:
+
+
 	//default constructor
 	Mp3Frame();
 
@@ -25,7 +27,7 @@ public:
 	Mp3Frame(const char* init, const char* id);
 
 	//copy constructor
-	Mp3Frame(const Mp3Frame& other);
+	Mp3Frame(const Mp3Frame& other) = delete;
 
 	//destructor
 	~Mp3Frame();

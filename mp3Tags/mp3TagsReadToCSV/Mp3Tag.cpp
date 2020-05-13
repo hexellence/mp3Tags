@@ -1,7 +1,7 @@
 #include <fstream>
 #include "Mp3Tag.h"
 #include "ID3V1Genre.h"
-
+#include "filesys.h"
 
 
 Mp3Tag::Mp3Tag(std::filesystem::path filePath) :
@@ -14,7 +14,7 @@ Mp3Tag::Mp3Tag(std::filesystem::path filePath) :
 
 	std::ifstream mp3File;
 
-	if (getID3Header(filePath, &id3v2Hdr, &id3v1Hdr)) {
+	if (getID3Headers(filePath, &id3v2Hdr, &id3v1Hdr)) {
 
 		m_fileName = filePath.filename().generic_u16string().c_str();
 		m_filePath = filePath.generic_u16string().c_str();
@@ -37,41 +37,6 @@ Mp3Tag::Mp3Tag(std::filesystem::path filePath) :
 
 Mp3Tag::~Mp3Tag() {
 
-}
-
-
-ID3V2FRM* Mp3Tag::getNextFrame(ID3V2FRM* currentFrame) {
-
-	ID3V2FRM* nextFrame = nullptr;
-	if (currentFrame != nullptr) {
-
-		int payloadSize = calcID3FieldSize(currentFrame->payloadSize);
-
-		nextFrame = (ID3V2FRM*)((int)currentFrame + 10 + payloadSize);
-
-		int nextPayloadSize = calcID3FieldSize(nextFrame->payloadSize);
-	}
-
-	return nextFrame;
-}
-
-bool Mp3Tag::getID3Header(std::filesystem::path filePath, ID3V2HDR* hdrv2, ID3V1HDR* hdrv1) {
-	bool retVal = false;
-	std::ifstream mp3File;
-	mp3File.open(filePath, std::ios::binary);
-	if (mp3File.is_open()) {
-
-		mp3File.seekg(std::ios::beg);
-		mp3File.read((char*)hdrv2, sizeof(ID3V2HDR));	//only read header first for effectiveness		
-		mp3File.seekg(ID3V1_TAG_OFFSET, std::ios::end);
-		mp3File.read((char*)hdrv1, sizeof(ID3V1HDR));	//only read header first for effectiveness		
-		retVal = true;
-		mp3File.close();
-	}
-	else {
-		retVal = false;
-	}
-	return retVal;
 }
 
 
@@ -185,15 +150,63 @@ void Mp3Tag::getID3v2Data(std::filesystem::path filePath, ID3V2HDR& hdr) {
 	}
 }
 
-bool isMp3(std::filesystem::path filePath) {
+int Mp3Tag::createID3Tag(char* id3Tag) {
+	int tagsize = 0;
+	
+	char16_t deneme[] = u"Deneme";
+	if (id3Tag != nullptr) {
+		ID3V2HDR* p_id3V2Tag = (ID3V2HDR*)id3Tag;		
+		memcpy(&p_id3V2Tag->id, "ID3", 3);
+		tagsize = tagsize + sizeof(p_id3V2Tag->id);
 
-	hxlstr input_file_ext = filePath.extension().string().c_str();
-	bool retVal = (input_file_ext == ".mp3") || (input_file_ext == ".MP3") || (input_file_ext == ".Mp3");
-	return retVal;
-}
+		p_id3V2Tag->ver[0] = 0x03;
+		p_id3V2Tag->ver[1] = 0x00;
+		tagsize = tagsize + sizeof(p_id3V2Tag->ver);
 
-bool isWma(std::filesystem::path filePath) {
-	hxlstr input_file_ext = filePath.extension().string().c_str();
-	bool retVal = (input_file_ext == ".wma") || (input_file_ext == ".WMA") || (input_file_ext == ".Wma");
-	return retVal;
+		p_id3V2Tag->flags = 0x00;
+		tagsize = tagsize + sizeof(p_id3V2Tag->flags);
+
+		p_id3V2Tag->size[0] = 0;
+		p_id3V2Tag->size[1] = 0;
+		p_id3V2Tag->size[2] = 0;
+		p_id3V2Tag->size[3] = 0;
+		tagsize = tagsize + sizeof(p_id3V2Tag->size);
+
+		ID3V2FRM* p_id3V2Frm = &p_id3V2Tag->firstFrame;
+
+		memcpy(&p_id3V2Frm[0].id, "TALB", 4);
+		tagsize = tagsize + sizeof(p_id3V2Frm->id);
+
+		p_id3V2Frm[0].payloadSize[0] = 0;
+		p_id3V2Frm[0].payloadSize[1] = 0;
+		p_id3V2Frm[0].payloadSize[2] = 0;
+		p_id3V2Frm[0].payloadSize[3] = 0;
+		tagsize = tagsize + sizeof(p_id3V2Frm->payloadSize);
+
+		p_id3V2Frm[0].flags[0] = 0x00;
+		p_id3V2Frm[0].flags[1] = 0x00;
+		tagsize = tagsize + sizeof(p_id3V2Frm->flags);
+
+		//BOM prepare
+		p_id3V2Frm[0].payload.enc = 0x01;
+		tagsize = tagsize + sizeof(p_id3V2Frm->payload.enc);
+		//BOM 
+		char* p_BOM = &p_id3V2Frm[0].payload.txt;
+		memcpy(p_BOM, BOM, 2);
+		tagsize = tagsize + 2;
+
+		// to ease coding have a pointer to the text
+		char* p_Data = &p_BOM[2];
+
+		// copy album name
+		memcpy(p_Data, (char*)deneme, 12);
+		tagsize = tagsize + 12;
+
+		//set payload size
+		p_id3V2Tag->firstFrame.payloadSize[3] = 12 + 3;//3 comes from the 3 byte BOM field
+
+		//set the tag size
+		p_id3V2Tag->size[3] = tagsize - 10;		
+	}
+	return tagsize;
 }

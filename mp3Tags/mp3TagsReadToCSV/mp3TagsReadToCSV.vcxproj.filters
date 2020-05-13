@@ -33,6 +33,15 @@
     <ClCompile Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ID3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ID3V1Tag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fileSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ID3V2Tag.h">
@@ -54,6 +63,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ID3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fileSys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
