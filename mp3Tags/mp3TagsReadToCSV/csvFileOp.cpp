@@ -21,23 +21,23 @@ bool prepareFiles(std::ofstream& csvFile, std::ofstream& nonID3FilesLog, std::of
 
 
 
-void writeColumns(std::ofstream& file) {
-	
+void writeColumns(std::ofstream& file) {	
 	
 	file.write(BOM, 2);
 	for (auto columnName : csvColumns) {
-		file.write(columnName.c_str(), columnName.size());
+		file.write(columnName.raw(), columnName.size());
 	}
 	
 }
 
 
 void writeField(std::ofstream& file, const hxlstr& field) {
+
 	if (field.c_str() != nullptr) {
-		file.write(field.c_str(), field.size());
+		file.write(field.raw(), field.size());
 	}
 	else {
-		file.write(SPACE.c_str(), SPACE.size());
+		file.write(SPACE.raw(), SPACE.size());
 	}
 }
 
@@ -47,6 +47,8 @@ void writeNextLine(std::ofstream& file, Mp3Tag& mp3) {
 	writeField(file, mp3.m_fileName);	
 	writeField(file, SEPARATOR);
 	writeField(file, mp3.m_title.m_str);
+	writeField(file, SEPARATOR);
+	writeField(file, mp3.m_trackNo.m_str);
 	writeField(file, SEPARATOR);
 	writeField(file, mp3.m_album.m_str);
 	writeField(file, SEPARATOR);

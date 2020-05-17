@@ -47,5 +47,6 @@ private:
 
 };
 
-int createID3Tag(char* id3TagOut, Mp3Frame* frames, int numOfFrames);
+int createID3v2Tag(char* id3v2TagOut, Mp3Frame* frames, int numOfFrames);
+int createID3v1Tag(ID3V1HDR* id3v1TagOut, Mp3Frame* frames, int numOfFrames);
 

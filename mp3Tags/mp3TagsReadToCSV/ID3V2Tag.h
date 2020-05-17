@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
+#include "ID3V1Tag.h"
 
 //  ID3V2
 //	+---------------------------- - +
@@ -240,12 +241,16 @@ static const uint8_t UTF16BE = 3;
 static const uint8_t UTF8 = 4;
 
 const uint8_t* getTextAddress(const ID3V2FRM* frame);
-int calcID3FieldSize(const uint8_t* number);
+int calcID3FieldSize(const uint8_t* number, bool nonStandardCalc = false);
 int GetID3v2PayloadSize(const ID3V2FRM* frame);
 bool isIdValid(const ID3V2FRM* frame);
 bool getID3v2Header(std::filesystem::path filePath, ID3V2HDR* hdrv2);
 ID3V2FRM* getNextFrame(ID3V2FRM* currentFrame);
-void setID3v2Header(std::filesystem::path filePath, char* id3Tag, int tagSize);
+void setID3Headers(std::filesystem::path filePath, char16_t* newFileName, const char* id3v2Tag, const ID3V1HDR* id3v1Tag, int id3v2TagSize);
 int getAudioOffset(std::filesystem::path filePath);
-int getAudioOffset(std::ifstream& mp3File);
-std::ifstream::pos_type getFileSize(std::filesystem::path filename);
+int getAudioOffset(std::ifstream& mp3File, int size);
+ID3V2FRM* getTag(std::filesystem::path filePath, char* id3Tag);
+int getTagSize(ID3V2HDR* hdr);
+int getFrmSize(ID3V2FRM* frm);
+bool checkifID3V2TagExist(std::filesystem::path filePath);
+void setTagSize(ID3V2HDR* hdr, int size);
