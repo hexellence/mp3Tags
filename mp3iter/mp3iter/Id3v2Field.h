@@ -1,32 +1,6 @@
 #pragma once
-#pragma once
+
 #include <cstdint>
-#include <filesystem>
-#include <fstream>
-#include "Id3v1Def.h"
-
-
-#pragma pack(push, 1)
-
-
-struct ID3V2FRMHDR {
-	char id[4];
-	uint8_t payloadSize[4];
-	uint8_t flags[2];
-	uint8_t encType;
-};
-
-struct ID3V2TAGHDR {
-	char id[3];
-	uint8_t ver[2];
-	uint8_t flags;
-	uint8_t size[4];	
-};//supposed to be 10 bytes repeated at the end of the audio data for speed
-
-
-#pragma pack(pop)
-
-const uint8_t mp3AudioHeader[2]{ 0xFF, 0xFB };
 
 enum ID3_FrameID
 {
@@ -125,14 +99,12 @@ enum ID3_FrameID
 	/* WXXX */ ID3FID_WWWUSER,           /**< User defined URL link */
 };
 
-
 struct ID3_FrameDef
 {
 	ID3_FrameID   eID;
 	char          sLongTextID[4 + 1];
 	const char* sDescription;
 };
-
 
 static  ID3_FrameDef ID3_FrameDefs[] =
 {
@@ -213,24 +185,32 @@ static  ID3_FrameDef ID3_FrameDefs[] =
 {ID3FID_WWWUSER,			"WXXX", "User defined URL link"},
 };
 
-static const uint8_t ENC_ASCII = 0;
-static const uint8_t ENC_UTF16LEWBOM = 1;
-static const uint8_t UTF16BEWBOM = 2;
-static const uint8_t UTF16BE = 3;
-static const uint8_t UTF8 = 4;
 
-void setID3Data(std::filesystem::path filePath, char16_t* newFileName, const char* id3v2Tag, const ID3V1HDR* id3v1Tag, int id3v2TagSize);
-int getAudioOffset(std::filesystem::path filePath);
-int getAudioOffset(std::ifstream& mp3File, int size);
-bool checkID3v2TagExist(std::filesystem::path filePath);
-int getID3v2TagHeader(std::filesystem::path filePath, ID3V2TAGHDR* hdr);
-const uint8_t* getID3v2PayloadTextAddress(const ID3V2FRMHDR* frame);
-int calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc = false);
-int GetID3v2PayloadSize(const ID3V2FRMHDR* frame);
-bool isID3v2TagIdValid(const ID3V2TAGHDR* tag);
-bool isID3v2FrmIdValid(const ID3V2FRMHDR* frame);
-ID3V2FRMHDR* getNextID3v2Frame(ID3V2FRMHDR* currentFrame);
-int readID3v2FrmSize(ID3V2FRMHDR* frm);
-ID3V2FRMHDR* readID3v2Tag(std::filesystem::path filePath, char* id3v2Tag, int tagsize);
-int readID3v2TagSize(ID3V2TAGHDR* hdr);
-void writeID3v2TagSize(ID3V2TAGHDR* hdr, int size);
+
+class Id3v2Field
+{
+public:
+	struct FrmHdr {
+		char id[4];
+		uint8_t payloadSize[4];
+		uint8_t flags[2];
+		char firstChar;
+	};
+
+	struct TagHdr {
+		char id[3];
+		uint8_t ver[2];
+		uint8_t flags;
+		uint8_t size[4];
+		FrmHdr firstFrm;		
+	};
+
+	static const int ID3V2_HDR_SIZE = 10;
+
+	static int calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc = false);
+	virtual int readID3v2FieldSize(const char*) = 0;
+	static bool isID3v2FieldIdValid(const FrmHdr* hdr);
+	static bool isID3v2FieldIdValid(const TagHdr* hdr);
+	
+};
+

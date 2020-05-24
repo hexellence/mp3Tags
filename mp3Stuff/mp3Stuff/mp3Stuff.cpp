@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include"Mp3InfoTag.h"
+#include"Id3v2Def.h"
+
 using namespace std;
 
 const char filePath[] = { "D:\\mp3\\mp3\\Alberto Iglesias - Banda\\Habla Con Ella\\01 - Habla Con Ella - Track 1.mp3" };
@@ -34,14 +36,18 @@ int main()
         cout << item.payload() << endl;
     }
     
+    ID3V2TAGHDR taghdr;
+    
+    int tagSize = getID3v2TagHeader(filePath, &taghdr);
 
+    char* pWholeTag = new char[tagSize];
 
-    ifstream mp3File;
-    char tagBuffer[1000];
+    ID3V2FRMHDR* currentFrame = readID3v2Tag(filePath, pWholeTag, tagSize);
 
-    mp3File.open(filePath, std::ios::binary);
-    mp3File.seekg(0, std::ios::beg);
-    mp3File.read((char*)tagBuffer, 100);
+    while (getNextID3v2Frame(currentFrame) != nullptr) {
+        tag.add(Mp3InfoFrm(*currentFrame));
+    }
+    
 
     std::cout << "Hello World!\n";
 }

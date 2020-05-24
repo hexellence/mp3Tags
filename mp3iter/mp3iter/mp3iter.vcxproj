@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{28812EDD-74E6-43FA-AA0A-32C571779192}</ProjectGuid>
+    <ProjectGuid>{CBB2A404-7975-4D45-8490-70CF5ABAAFBB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>mp3Stuff</RootNamespace>
+    <RootNamespace>mp3iter</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\HTL\trim;D:\TUNCA\HEXELLENCE\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -152,23 +152,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.cpp" />
-    <ClCompile Include="DeneClass.cpp" />
     <ClCompile Include="fileUtil.cpp" />
-    <ClCompile Include="Id3v1Def.cpp" />
-    <ClCompile Include="Id3v2Def.cpp" />
-    <ClCompile Include="Mp3InfoFrm.cpp" />
-    <ClCompile Include="Mp3InfoTag.cpp" />
-    <ClCompile Include="mp3Stuff.cpp" />
+    <ClCompile Include="Id3v2Field.cpp" />
+    <ClCompile Include="Id3v2Frm.cpp" />
+    <ClCompile Include="Id3v2Tag.cpp" />
+    <ClCompile Include="mp3.cpp" />
+    <ClCompile Include="mp3iter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\HTL\trim\trim.h" />
     <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.h" />
-    <ClInclude Include="DeneClass.h" />
     <ClInclude Include="fileUtil.h" />
-    <ClInclude Include="Id3v1Def.h" />
-    <ClInclude Include="Id3v2Def.h" />
-    <ClInclude Include="Mp3InfoFrm.h" />
-    <ClInclude Include="Mp3InfoTag.h" />
+    <ClInclude Include="Id3v2Field.h" />
+    <ClInclude Include="Id3v2Frm.h" />
+    <ClInclude Include="Id3v2Tag.h" />
+    <ClInclude Include="mp3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

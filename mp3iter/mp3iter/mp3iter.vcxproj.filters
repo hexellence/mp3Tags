@@ -15,54 +15,45 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mp3Stuff.cpp">
+    <ClCompile Include="mp3iter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Id3v2Def.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Id3v1Def.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mp3InfoTag.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mp3InfoFrm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fileUtil.cpp">
+    <ClCompile Include="mp3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DeneClass.cpp">
+    <ClCompile Include="fileUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Id3v2Tag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Id3v2Frm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Id3v2Field.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\HTL\trim\trim.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Id3v2Def.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Id3v1Def.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mp3InfoTag.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mp3InfoFrm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fileUtil.h">
+    <ClInclude Include="mp3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeneClass.h">
+    <ClInclude Include="fileUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Id3v2Tag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Id3v2Frm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Id3v2Field.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

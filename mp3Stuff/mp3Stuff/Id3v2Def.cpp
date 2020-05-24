@@ -102,10 +102,17 @@ bool checkID3v2TagExist(std::filesystem::path filePath)
 }
 
 
-bool getID3v2TagHeader(std::filesystem::path filePath, ID3V2TAGHDR* hdr)
+int getID3v2TagHeader(std::filesystem::path filePath, ID3V2TAGHDR* hdr)
 {
-	bool retVal = readFile(filePath, (char*)hdr, sizeof(ID3V2TAGHDR));
-	return retVal;
+	int tagSize = 0;
+	if (readFile(filePath, (char*)hdr, sizeof(ID3V2TAGHDR))) 
+	{
+		if (isID3v2TagIdValid(hdr))
+		{
+			tagSize = readID3v2TagSize(hdr);
+		}
+	}
+	return tagSize;
 }
 
 
@@ -210,7 +217,7 @@ bool isID3v2FrmIdValid(const ID3V2FRMHDR* frame) {
 }
 
 
-ID3V2FRMHDR* nextFrame(ID3V2FRMHDR* currentFrame) {
+ID3V2FRMHDR* getNextID3v2Frame(ID3V2FRMHDR* currentFrame) {
 
 	ID3V2FRMHDR* next = nullptr;
 	if (currentFrame != nullptr) {
@@ -234,7 +241,7 @@ ID3V2FRMHDR* nextFrame(ID3V2FRMHDR* currentFrame) {
 }
 
 
-int readFrmSize(ID3V2FRMHDR* frm)
+int readID3v2FrmSize(ID3V2FRMHDR* frm)
 {
 	int size = 0;
 	if (frm != nullptr) {
@@ -249,26 +256,20 @@ int readFrmSize(ID3V2FRMHDR* frm)
 }
 
 
-ID3V2FRMHDR* readTag(std::filesystem::path filePath, char* id3v2Tag) {
+ID3V2FRMHDR* readID3v2Tag(std::filesystem::path filePath, char* id3v2Tag, int tagsize) {
 	ID3V2FRMHDR* firstFrameAddress = nullptr;
 
 	if (isMp3(filePath))
 	{
 		if (checkID3v2TagExist(filePath))
-		{
-			ID3V2TAGHDR hdr{};
-			if (getID3v2TagHeader(filePath, &hdr))
+		{	if (readFile(filePath, id3v2Tag, tagsize))
 			{
-				int tagsize = readTagSize(&hdr);
-				if (readFile(filePath, id3v2Tag, tagsize))
+				firstFrameAddress = (ID3V2FRMHDR*)((int)id3v2Tag + sizeof(ID3V2TAGHDR));
+				if (isID3v2FrmIdValid(firstFrameAddress) != true)
 				{
-					firstFrameAddress = (ID3V2FRMHDR*)((int)id3v2Tag + sizeof(ID3V2TAGHDR));
-					if (isID3v2FrmIdValid(firstFrameAddress) != true)
-					{
-						firstFrameAddress = nullptr;
-					}
-				}//read success
-			}//get success
+					firstFrameAddress = nullptr;
+				}
+			}//read success			
 		}//if there is ID3 Tag
 	}//is MP3 file
 
@@ -276,13 +277,13 @@ ID3V2FRMHDR* readTag(std::filesystem::path filePath, char* id3v2Tag) {
 }
 
 
-int readTagSize(ID3V2TAGHDR* hdr)
+int readID3v2TagSize(ID3V2TAGHDR* hdr)
 {
 	return calcID3v2SizeField(hdr->size) + 10;
 }
 
 
-void writeTagSize(ID3V2TAGHDR* hdr, int size)
+void writeID3v2TagSize(ID3V2TAGHDR* hdr, int size)
 {
 	int temp = size;
 	int i = 3;
