@@ -172,12 +172,18 @@ public:
 	void append(hxlstr id, hxlstr text)
 	{
 		FrmHdr* lastFrm = last();
-		int lastFrameSize = lastFrm->size();
+		int lastFrameSize = 0;
+		if (lastFrm->valid())
+		{
+			lastFrameSize = lastFrm->size() + ID3V2_HDR_SIZE;
+		}
 
-		FrmHdr* newFrm = (FrmHdr*)((int)lastFrm + lastFrameSize + ID3V2_HDR_SIZE);
-		newFrm->content(text);
-		newFrm->id(id);		
+		FrmHdr* newFrm = (FrmHdr*)((int)lastFrm + lastFrameSize);
+		
+		newFrm->id(id);
 		newFrm->size(text.size());
+		newFrm->flags();
+		newFrm->content(text);		
 
 		//update Tag size
 		m_pTagHdr->size(m_pTagHdr->size() + newFrm->size() + ID3V2_HDR_SIZE);

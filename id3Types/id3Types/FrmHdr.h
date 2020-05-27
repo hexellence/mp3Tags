@@ -132,6 +132,13 @@ public:
 	}
 
 
+	void flags()
+	{
+		_flags[0] = 0x00;
+		_flags[1] = 0x00;
+	}
+
+
 	void size(int size) 
 	{
 		int temp = size;
