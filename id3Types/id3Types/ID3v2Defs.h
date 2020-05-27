@@ -1,7 +1,5 @@
 #pragma once
-
-#include <cstdint>
-#include "trim.h"
+static const int ID3V2_HDR_SIZE = 10;
 
 enum ID3_FrameID
 {
@@ -185,13 +183,3 @@ static  ID3_FrameDef ID3_FrameDefs[] =
 {ID3FID_WWWPUBLISHER,		"WPUB", "Official publisher webpage"},
 {ID3FID_WWWUSER,			"WXXX", "User defined URL link"},
 };
-
-
-
-class Id3v2Field
-{
-public:
-	static const int ID3V2_HDR_SIZE = 10;
-	static int calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc = false);	
-};
-

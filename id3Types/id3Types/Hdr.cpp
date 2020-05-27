@@ -1,11 +1,8 @@
-#include <memory>
-#include "Id3v2Field.h"
-#include "fileUtil.h"
-#include "trim.h"
+#include "Hdr.h"
 
 
-int Id3v2Field::calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc) {
-	
+int Hdr::calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc) {
+
 	int retVal = 0;
 
 	if ((number[3] < 127) && (number[2] < 127) && (number[1] < 127) && (number[0] < 127) && !nonStandardCalc)
@@ -26,6 +23,12 @@ int Id3v2Field::calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc) 
 }
 
 
+void Hdr::convertEndianness(uint8_t* inout, int size) {
 
-
-
+	int loopCount = size / 2;
+	for (int i = 0; i < loopCount; ++i) {
+		uint8_t temp = inout[size - 1 - i];
+		inout[size - 1 - i] = inout[i];
+		inout[i] = temp;
+	}
+}

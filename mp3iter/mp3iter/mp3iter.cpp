@@ -16,14 +16,14 @@ int main()
 
     Id3v2Tag tag(filePath);
 
-    cout << tag["TIT2"] << endl;
+    //cout << tag["TIT2"] << endl;
 
     tag["TIT2"] = "Deneme";
 
-    for (Id3v2Tag::iterator it = tag.begin(); it != tag.end(); it++)
-    {
-        cout << (*it).getFrameId() << endl;
-    }
+    //for (Id3v2Tag::iterator it = tag.begin(); it != tag.end(); it++)
+    //{
+    //    //cout << (*it).getFrameId() << endl;
+    //}
     
 
     std::cout << "Hello World!\n";

@@ -2,43 +2,52 @@
 #include "fileUtil.h"
 #include "Id3v2Tag.h"
 
+Id3v2Tag::Id3v2Tag(std::filesystem::path filePath) : m_pFirstFrame(nullptr), m_pWholeTag(nullptr), m_pTagHdr(nullptr) {
+
+	TagHdr hdr;
+	int size = getID3v2TagHeader(filePath, &hdr);
+	if (size > 0)
+	{
+		m_pWholeTag = new char[size * 2];
+		m_pFirstFrame = (FrmHdr*)readID3v2Tag(filePath, m_pWholeTag, size);
+		if (m_pFirstFrame != nullptr)
+		{
+			m_pTagHdr = (TagHdr*)m_pWholeTag;
+		}
+	}
+}
 
 
-int Id3v2Tag::getID3v2TagHeader(std::filesystem::path filePath, Id3v2Field::TagHdr* hdr)
+int Id3v2Tag::getID3v2TagHeader(std::filesystem::path filePath, TagHdr* hdr)
 {
 	int tagSize = 0;
 	if (readFile(filePath, (char*)hdr, sizeof(*hdr)))
 	{
-		if (isID3v2FieldIdValid(hdr))
+		if (hdr->isValid())
 		{
-			tagSize = readID3v2FieldSize((const char*)hdr);
+			tagSize = hdr->size();
 		}
 	}
 	return tagSize;
 }
 
-int Id3v2Tag::readID3v2FieldSize(const char* tag) {
-
-	return calcID3v2SizeField(((Id3v2Field::TagHdr*)tag)->size) + ID3V2_HDR_SIZE;
-}
-
 
 char* Id3v2Tag::readID3v2Tag(std::filesystem::path filePath, char* id3v2Tag, int tagsize) {
-	char* firstFrameAddress = nullptr;
+	FrmHdr* firstFrame = nullptr;
 
 	if (checkID3v2TagExist(filePath))
 	{
 		if (readFile(filePath, id3v2Tag, tagsize))
 		{
-			firstFrameAddress = (char*)((int)id3v2Tag + ID3V2_HDR_SIZE);
-			if (isID3v2FieldIdValid((FrmHdr*)firstFrameAddress) != true)
+			firstFrame = (FrmHdr*)((int)id3v2Tag + ID3V2_HDR_SIZE);
+			if (firstFrame->isValid() != true)
 			{
-				firstFrameAddress = nullptr;
+				firstFrame = nullptr;
 			}
 		}//read success			
 	}//if there is ID3 Tag
 
-	return firstFrameAddress;
+	return (char*)firstFrame;
 }
 
 
@@ -46,9 +55,9 @@ bool Id3v2Tag::checkID3v2TagExist(std::filesystem::path filePath)
 {
 	bool retVal = false;
 
-	Id3v2Field::TagHdr hdr;
+	TagHdr hdr;
 	retVal = readFile(filePath, (char*)&hdr, sizeof(hdr));
-	retVal = retVal && isID3v2FieldIdValid(&hdr);
+	retVal = retVal && hdr.isValid();
 
 	return retVal;
 }
@@ -58,21 +67,7 @@ bool Id3v2Tag::checkID3v2TagExist(std::filesystem::path filePath)
 //	std::cout << "Default Constructor" << std::endl;
 //}
 
-Id3v2Tag::Id3v2Tag(std::filesystem::path filePath) : m_pos(0), m_tagSize(0), m_pFirstFrame(nullptr), m_pWholeTag(nullptr), m_pTagHdr(nullptr), m_CurrentFrame(nullptr){
 
-	Id3v2Field::TagHdr hdr;
-	int size = getID3v2TagHeader(filePath, &hdr);
-	if (size > 0)
-	{
-		m_pWholeTag = new char[size];
-		m_pFirstFrame = (FrmHdr*)readID3v2Tag(filePath, m_pWholeTag, size);
-		if (m_pFirstFrame != nullptr)
-		{
-			m_pTagHdr = (TagHdr*)m_pWholeTag;
-			m_tagSize = size;
-		}
-	}
-}
 
 
 Id3v2Tag::~Id3v2Tag() {
@@ -80,20 +75,20 @@ Id3v2Tag::~Id3v2Tag() {
 }
 
 
-hxlstr& Id3v2Tag::operator[](hxlstr id) 
+Id3v2Tag::FrmHdr& Id3v2Tag::operator[](const char* id)
 {
 	Id3v2Tag::iterator it = find(id);
-	return (*it).getFrameText();
+	return (*it);
 }
 
 
-Id3v2Tag::iterator Id3v2Tag::find(hxlstr id) {
-	
-	Id3v2Tag::iterator tempVal = end();	
+Id3v2Tag::iterator Id3v2Tag::find(const char* id) {
+
+	Id3v2Tag::iterator tempVal = end();
 
 	for (Id3v2Tag::iterator it = begin(); it != end(); it++)
 	{
-		if ((*it).getFrameId() == id) {
+		if (((*it)._id[0] == id[0]) && ((*it)._id[1] == id[1]) && ((*it)._id[2] == id[2]) && ((*it)._id[3] == id[3])) {
 			tempVal = it;
 			break;
 		}
@@ -102,33 +97,58 @@ Id3v2Tag::iterator Id3v2Tag::find(hxlstr id) {
 }
 
 
-Id3v2Frm& Id3v2Tag::fetch(FrmHdr* hdr)
+Id3v2Tag::FrmHdr& Id3v2Tag::fetch(FrmHdr* hdr)
 {
-	m_CurrentFrame = Id3v2Frm(hdr);
-	return m_CurrentFrame;
+	return *hdr;
 }
 
-Id3v2Field::FrmHdr* Id3v2Tag::iterator::nextFrame(Id3v2Field::FrmHdr* currentFrame) {
-	
-	Id3v2Field::FrmHdr* nextFrame = nullptr;
-	if (currentFrame != nullptr) {
 
-		int payloadSize = calcID3v2SizeField(currentFrame->payloadSize);
+Id3v2Tag::FrmHdr* Id3v2Tag::FrmHdr::nextFrame() {
 
-		nextFrame = (FrmHdr*)((int)currentFrame + ID3V2_HDR_SIZE + payloadSize);
+	FrmHdr* nextFrame = nullptr;
+	FrmHdr* currFrame = (FrmHdr*)_id;
 
-		if (!isID3v2FieldIdValid(nextFrame))
+	int plSize = calcID3v2SizeField(_payloadSize);
+
+	nextFrame = (FrmHdr*)((int)currFrame + ID3V2_HDR_SIZE + plSize);
+
+	if (!nextFrame->isValid())
+	{
+		plSize = calcID3v2SizeField(_payloadSize, true); //non standard 
+		nextFrame = (FrmHdr*)((int)currFrame + ID3V2_HDR_SIZE + plSize);
+
+		if (!nextFrame->isValid())
 		{
-			payloadSize = calcID3v2SizeField(currentFrame->payloadSize, true); //non standard 
-			nextFrame = (FrmHdr*)((int)currentFrame + ID3V2_HDR_SIZE + payloadSize);
-			if (!isID3v2FieldIdValid(nextFrame))
-			{
-				nextFrame = nullptr;
-			}
+			nextFrame = nullptr;
 		}
 	}
-
 	return nextFrame;
 }
 
 
+Id3v2Tag::FrmHdr& Id3v2Tag::FrmHdr::operator=(const char* pl)
+{
+	TagHdr* tag = (TagHdr*)_pTag;
+	FrmHdr* curFrame = (FrmHdr*)_id;
+	FrmHdr* nexFrame = curFrame->nextFrame();	
+	int size = tag->size();
+
+	char* lastaddress = (char*)((int)tag + tag->size());
+	int copySize = (int)lastaddress - (int)nexFrame;
+	
+	//set payload size
+	uint32_t sizeNewPayload = hxl::length(pl) + 1;
+	char* copyDest = (char*)((int)curFrame + sizeNewPayload + 10);	
+
+	memcpy(copyDest, nexFrame, copySize);
+	
+	memcpy(_payloadSize, &sizeNewPayload, 4);
+	//convert endianness
+	convertEndianness(_payloadSize, 4);
+	char* pltext = &_firstChar;
+	pltext[0] = 0x00;	//ASCII
+	memcpy(&pltext[1], pl, size - 1);
+
+
+	return *this;
+}

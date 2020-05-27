@@ -15,51 +15,45 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mp3iter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mp3.cpp">
+    <ClCompile Include="FrmHdr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hdr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fileUtil.cpp">
+    <ClCompile Include="TagHdr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Id3v2Tag.cpp">
+    <ClCompile Include="______runThis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Id3v2Frm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Id3v2Field.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Id3v2Text.cpp">
+    <ClCompile Include="fileUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mp3.h">
+    <ClInclude Include="FrmHdr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Library\programming\Cpp\trunk\libs\HexellenceLibs\hxlstring\hxlstr.h">
+    <ClInclude Include="Hdr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fileUtil.h">
+    <ClInclude Include="TagHdr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Id3v2Tag.h">
+    <ClInclude Include="ID3v2Defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Id3v2Frm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Id3v2Field.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Id3v2Text.h">
+    <ClInclude Include="fileUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
