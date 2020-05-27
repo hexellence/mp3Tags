@@ -22,13 +22,3 @@ int Hdr::calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc) {
 	return retVal;
 }
 
-
-void Hdr::convertEndianness(uint8_t* inout, int size) {
-
-	int loopCount = size / 2;
-	for (int i = 0; i < loopCount; ++i) {
-		uint8_t temp = inout[size - 1 - i];
-		inout[size - 1 - i] = inout[i];
-		inout[i] = temp;
-	}
-}

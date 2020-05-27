@@ -5,15 +5,6 @@
 #include "FileUtil.h"
 #include <filesystem>
 
-class Id3v2Frm
-{
-private:
-	FrmHdr* frm;
-	TagHdr* tag;
-};
-
-
-/****************************************************************/
 
 
 class Id3v2Tag
