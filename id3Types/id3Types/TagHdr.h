@@ -20,22 +20,24 @@ public:
 		memset(_ver, 0, 2);
 		memset(_size, 0, 4);		
 	}
+		
+	TagHdr(const TagHdr& other) = delete;
 
 	//checkers
-	bool valid()
+	bool valid() const
 	{
-		return ((_id[0] == 'I') && (_id[1] == 'D') && (_id[2] == '3'));
+		return (id() == "ID3");
 	}
 
 
 	//getters
-	hxlstr id()
+	hxlstr id() const
 	{
 		return hxlstr(_id, 3);
 	}	
 
 
-	int size()
+	int size() const
 	{
 		return calcID3v2SizeField(_size);
 	}
@@ -43,7 +45,10 @@ public:
 
 	FrmHdr* first()
 	{
-		return &_firstFrm;
+		if (_firstFrm.valid())
+			return &_firstFrm;
+		else
+			return nullptr;
 	}
 
 

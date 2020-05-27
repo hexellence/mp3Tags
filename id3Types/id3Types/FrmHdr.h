@@ -15,33 +15,39 @@ private:
 	uint8_t _flags[2];
 	uint8_t _payload;
 
-public:
-	FrmHdr() = delete;
-
-	FrmHdr(hxlstr id, hxlstr text) 
+	void size(int size)
 	{
-		this->id(id);
-		this->content(text);
-		if (text.enc() == hxlstr::ENC::ASCII)
-		{
-			this->size(text.size() + 1);
+		int temp = size;
+		int i = 3;
+		while (temp > 0) {
+
+			_payloadSize[i] = temp % 128;
+			i--;
+			temp = temp / 128;
 		}
-		else if (text.enc() == hxlstr::ENC::UTF16LE)
-		{
-			this->size(text.size() + 3);
-		}
-		_flags[0] = 0x00;
-		_flags[1] = 0x00;
 	}
 
+public:
+	//Constructors
+	//don't want automatic consctructors. 
+	FrmHdr() = delete;
 	FrmHdr(const FrmHdr& other) = delete;
+
+	//This constructor is only used to create a frame to copy to the actual tag. some class methods should not be executed on objects that are created.
+	FrmHdr(hxlstr name, hxlstr text) 
+	{
+		id(name);
+		value(text);		
+		_flags[0] = 0x00;
+		_flags[1] = 0x00;
+	}	
 	
-	
-	bool valid()
+	//Checkers
+	bool valid() const
 	{
 		bool idFound = false;
 		for (auto item : ID3_FrameDefs) {
-			if(this->id() == item.sLongTextID)			
+			if(id() == item.sLongTextID)			
 			{
 				idFound = true;
 				break;
@@ -50,16 +56,16 @@ public:
 		return idFound;
 	}
 
+
 	//getters
-	hxlstr id() 
+	hxlstr id() const
 	{
 		return hxlstr(_id, 4);
 	}
 
 
-	int size() 
-	{
-		
+	int size() const
+	{		
 		FrmHdr* nextFrame = nullptr;
 
 		int plSize = calcID3v2SizeField(_payloadSize);
@@ -79,7 +85,8 @@ public:
 		return retVal;
 	}
 
-	FrmHdr* next()
+
+	FrmHdr* next() const
 	{		
 		FrmHdr* nextFrame = nullptr;
 
@@ -99,7 +106,8 @@ public:
 		return nextFrame;
 	}
 
-	hxlstr content() 
+
+	hxlstr value() const
 	{
 		hxlstr tempVal;
 		char* content = (char*)&_payload;
@@ -107,22 +115,21 @@ public:
 		if (content[0] == 0x00) 
 		{
 			//ASCII
-			if (this->size() > 1)
+			if (size() > 1)
 			{
-				tempVal = hxlstr(&content[1], this->size() - 1);
+				tempVal = hxlstr(&content[1], size() - 1);
 			}
 		}
 		else if(content[0] == 0x01)
 		{
 			//UNICODE
-			if (this->size() > 4)
+			if (size() > 4)
 			{
-				tempVal = hxlstr((uint8_t*)&content[3], this->size() - 3, hxlstr::ENC::UTF16LE);
+				tempVal = hxlstr((uint8_t*)&content[3], size() - 3, hxlstr::ENC::UTF16LE);
 			}
 		}
 		return tempVal;
 	}
-
 
 
 	//setters
@@ -138,21 +145,7 @@ public:
 		_flags[1] = 0x00;
 	}
 
-
-	void size(int size) 
-	{
-		int temp = size;
-		int i = 3;
-		while (temp > 0) {
-
-			_payloadSize[i] = temp % 128;
-			i--;
-			temp = temp / 128;
-		}
-	}
-
-
-	void content(hxlstr content) 
+	void value(hxlstr content) 
 	{
 		hxlstr tempVal;
 		uint8_t* pld = &_payload;
@@ -162,7 +155,7 @@ public:
 			//ASCII
 			pld[0] = 0x00;
 			memcpy(&pld[1], content.c_str(), content.size());		
-			this->size(content.size() + 1);
+			size(content.size() + 1);
 		}
 		else if (content.enc() == hxlstr::ENC::UTF16LE)
 		{
@@ -171,8 +164,9 @@ public:
 			pld[1] = 0xFE;
 			pld[2] = 0xFF;
 			memcpy(&pld[3], content.c16_str(), content.size());
-			this->size(content.size() + 3);
+			size(content.size() + 3);
 		}		
 	}
+
 };
 

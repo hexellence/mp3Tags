@@ -20,6 +20,11 @@ int main()
         cout << (*it).id() << endl;
     }
 
+
+    myTag.insert(myTag.find("TIT2"), "TUNC", "Deniz Erdogan");
+
+    myTag.clear();
+
     myTag.del("GEOB");
     myTag.del("TIT2");
     myTag.del("TCON");
@@ -39,14 +44,9 @@ int main()
     myTag.del("TCOM");
     myTag.del("TPE1");
 
-    myTag.append("TIT2", "Tunca Erdogan");
-    myTag.append("TALB", "Deniz Erdogan");
-    
-    
-
-    
-
-    myTag.append("TIT2", "Tunca Erdogan");
+    myTag.push_back("TIT2", "Tunca Erdogan");
+    myTag.push_back("TALB", "Deniz Erdogan");
+    myTag.push_back("TIT2", "Tunca Erdogan");
 
     //Id3v2Tag tag(filePath);
 

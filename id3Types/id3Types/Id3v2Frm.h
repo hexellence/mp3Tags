@@ -4,6 +4,7 @@
 #include "TagHdr.h"
 #include "FileUtil.h"
 #include <filesystem>
+#include <utility>
 
 
 
@@ -103,7 +104,10 @@ public:
 
 	iterator begin()
 	{
-		return iterator(m_pTagHdr->first(), *this);
+		if (m_pTagHdr->first()->valid())
+			return iterator(m_pTagHdr->first(), *this);
+		else
+			return end();
 	}
 
 	iterator end()
@@ -111,22 +115,36 @@ public:
 		return iterator(nullptr, *this);
 	}
 
-	FrmHdr* find(hxlstr id)
+	//FrmHdr* find(hxlstr id)
+	//{
+	//	FrmHdr* pFrm = m_pTagHdr->first();
+	//	while (pFrm != nullptr)
+	//	{
+	//		if (pFrm->id() == id)
+	//		{
+	//			break;
+	//		}
+
+	//		pFrm = pFrm->next();
+	//	}
+	//	return pFrm;
+	//}
+
+	iterator find(hxlstr id)
 	{
-		FrmHdr* pFrm = m_pTagHdr->first();
-		while (pFrm != nullptr)
+		iterator it = iterator(m_pTagHdr->first(), *this);
+		while (it != end())
 		{
-			if (pFrm->id() == id)
+			if ((*it).id() == id)
 			{
 				break;
 			}
-
-			pFrm = pFrm->next();
+			it++;
 		}
-		return pFrm;
+		return it;
 	}
 
-	FrmHdr* last()
+	FrmHdr* lastAddress()
 	{
 		FrmHdr* curFrm = m_pTagHdr->first();
 		FrmHdr* nextFrm = curFrm;
@@ -139,30 +157,53 @@ public:
 		return curFrm;
 	}
 
-	void del(hxlstr id)
+	iterator last()
 	{
-		FrmHdr* frmToDelete = find(id);
-		int frameSizeDelete = frmToDelete->size() + ID3V2_HDR_SIZE;
-
-		//overwrite old frame
-		FrmHdr* nextFrame = frmToDelete->next();
-		if (nextFrame == nullptr)
+		iterator it = begin();
+		iterator itLast = begin();
+		while(it != end())
 		{
-			//if it was the last frame hypotetical nextFrame would be at this address
-			nextFrame = (FrmHdr*)((int)frmToDelete + frameSizeDelete);
+			itLast = it;
+			it++;
 		}
-
-		int moveSize = m_pTagHdr->size() + ID3V2_HDR_SIZE - (int)nextFrame + (int)m_pTagHdr;
-		memcpy(frmToDelete, nextFrame, moveSize);
-
-		
-		//update Tag size		
-		m_pTagHdr->size(m_pTagHdr->size() - frameSizeDelete);		
+		return itLast;
 	}
 
-	void append(hxlstr id, hxlstr text)
+	void del(hxlstr id)
 	{
-		FrmHdr* lastFrm = last();
+		iterator it = find(id);
+		del(it);
+	}
+
+	void del(iterator it)
+	{		
+		if (it != end())
+		{
+			FrmHdr* frmToDelete = &(*it);
+			//FrmHdr* frmToDelete = find(id);
+			int frameSizeDelete = frmToDelete->size() + ID3V2_HDR_SIZE;
+
+			//overwrite old frame
+			FrmHdr* nextFrame = frmToDelete->next();
+			if (nextFrame == nullptr)
+			{
+				//if it was the last frame hypotetical nextFrame would be at this address
+				nextFrame = (FrmHdr*)((int)frmToDelete + frameSizeDelete);
+			}
+
+			int moveSize = m_pTagHdr->size() + ID3V2_HDR_SIZE - (int)nextFrame + (int)m_pTagHdr;
+			memcpy(frmToDelete, nextFrame, moveSize);
+
+			//update Tag size		
+			m_pTagHdr->size(m_pTagHdr->size() - frameSizeDelete);
+		}
+	}
+
+	void push_back(hxlstr id, hxlstr text)
+	{
+		iterator it = last();
+		FrmHdr* lastFrm = &(*it);
+
 		int lastFrameSize = 0;
 		if (lastFrm->valid())
 		{
@@ -171,20 +212,47 @@ public:
 
 		FrmHdr* newFrm = (FrmHdr*)((int)lastFrm + lastFrameSize);
 		
-		newFrm->id(id);
-		newFrm->size(text.size());
+		newFrm->id(id);		
 		newFrm->flags();
-		newFrm->content(text);		
+		newFrm->value(text);		
 
 		//update Tag size
 		m_pTagHdr->size(m_pTagHdr->size() + newFrm->size() + ID3V2_HDR_SIZE);
 	}
 
-	void replace(hxlstr id, hxlstr text)
+	void insert(iterator it, hxlstr id, hxlstr text)
+	{			
+		if (it != end())
+		{
+			int newFrmSize = (text.enc() == hxlstr::ENC::ASCII) ? text.size() + 1 : text.size() + 3;
+			newFrmSize += ID3V2_HDR_SIZE;
+
+			FrmHdr* presentFrm = &(*it);	//this frame will slide as much as our new frame size is	
+			FrmHdr* newLocation = (FrmHdr*)((int)presentFrm + newFrmSize); //present frame's new location
+
+			//calculate how much data will be moved
+			int moveSize = m_pTagHdr->size() + ID3V2_HDR_SIZE - (int)presentFrm + (int)m_pTagHdr;
+			//copy and make space where the former frame was
+
+			memcpy(newLocation, presentFrm, moveSize);
+			
+			//presentFrm will now contain new
+			presentFrm->id(id);
+			presentFrm->flags();			
+			presentFrm->value(text);
+			//update Tag size		
+			m_pTagHdr->size(m_pTagHdr->size() + newFrmSize);
+		}
+
+		
+	}
+
+	void clear()
 	{
-		FrmHdr newfrm(id, text);
-		del(id);
-		append(id, text);
+		while (begin() != end())
+		{
+			del(begin());
+		}
 	}
 
 };
