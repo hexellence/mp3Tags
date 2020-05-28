@@ -25,9 +25,16 @@ int main()
 
     cout << endl;
     
-    cout << tag1.first() << endl;
-    cout << tag1.last() << endl;
-    cout << tag1.find("TIT2") << endl;
+    cout << "operator <<" << endl;
+    
+    cout << "first() method" << endl;
+    cout << tag1.first() << endl << endl;
+    
+    cout << "last() method" << endl;
+    cout << tag1.last() << endl << endl;
+    
+    cout << "find() method" << endl;
+    cout << tag1.find("TIT2") << endl << endl;
 
     cout << endl;
 
