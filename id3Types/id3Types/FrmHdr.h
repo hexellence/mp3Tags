@@ -15,149 +15,28 @@ private:
 	uint8_t _flags[2];
 	uint8_t _payload;
 
-	void size(int size)
-	{
-		int temp = size;
-		int i = 3;
-		while (temp > 0) {
-
-			_payloadSize[i] = temp % 128;
-			i--;
-			temp = temp / 128;
-		}
-	}
+	void size(int size); /*size(int) method lets the class set the payload size when a string is written to a frame.
+							This function is not public, as it may cause problems if it is not used carefully.*/
 
 public:
 	//Constructors
-	//don't want automatic consctructors. 
+	//don't want automatic consctructors as the memory is assumed to be reserved by the upper level application. 
+	//letting constructors can be dangerous as we are walking over a memory area filled from an mp3 file.
 	FrmHdr() = delete;
 	FrmHdr(const FrmHdr& other) = delete;	
 	
-	//Checkers
-	bool valid() const
-	{
-		hxlstr frmId = id();
-		bool idFound = false;
-		for (auto item : ID3_FrameDefs) {
-			if(frmId == item.sLongTextID)
-			{
-				idFound = true;
-				break;
-			}
-		}
-		return idFound;
-	}
-
 	//getters
-	hxlstr id() const
-	{
-		return hxlstr(_id, 4);
-	}
-
-
-	int size() const
-	{		
-		FrmHdr* nextFrame = nullptr;
-
-		int plSize = calcID3v2SizeField(_payloadSize);
-		int retVal = plSize;
-		nextFrame = (FrmHdr*)((int)this + ID3V2_HDR_SIZE + plSize);
-
-		if (!nextFrame->valid())
-		{		
-			plSize = calcID3v2SizeField(_payloadSize, true); //non standard 
-			nextFrame = (FrmHdr*)((int)this + ID3V2_HDR_SIZE + plSize);
-
-			if (nextFrame->valid())
-			{
-				retVal = plSize;
-			}
-		}
-		return retVal;
-	}
-
-
-	FrmHdr* next() const
-	{		
-		FrmHdr* nextFrame = nullptr;
-
-		int plSize = calcID3v2SizeField(_payloadSize);
-		nextFrame = (FrmHdr*)((int)this + ID3V2_HDR_SIZE + plSize);
-
-		if (!nextFrame->valid())
-		{
-			plSize = calcID3v2SizeField(_payloadSize, true); //non standard 
-			nextFrame = (FrmHdr*)((int)this + ID3V2_HDR_SIZE + plSize);
-
-			if (!nextFrame->valid())
-			{
-				nextFrame = nullptr;
-			}
-		}
-		return nextFrame;
-	}
-
-
-	hxlstr value() const
-	{
-		hxlstr tempVal;
-		char* content = (char*)&_payload;
-
-		if (content[0] == 0x00) 
-		{
-			//ASCII
-			if (size() > 1)
-			{
-				tempVal = hxlstr(&content[1], size() - 1);
-			}
-		}
-		else if(content[0] == 0x01)
-		{
-			//UNICODE
-			if (size() > 4)
-			{
-				tempVal = hxlstr((uint8_t*)&content[3], size() - 3, hxlstr::ENC::UNICD);
-			}
-		}
-		return tempVal;
-	}
-
-
+	bool valid() const; //valid() method checks if the frame is valid.
+	hxlstr id() const; //id() method returns the id of the frame.
+	int size() const; //size() method returns the size of the payload.
+	int bytes() const; //bytes() method returns the size of the payload and the header.
+	FrmHdr* next() const; //next() method returns a pointer to the next frame.
+	hxlstr value() const; //value() method returns a copy of the string in the frame.
+	
 	//setters
-	void id(hxlstr id) 
-	{
-		memcpy(_id, id.c_str(), 4);
-	}
-
-
-	void flags()
-	{
-		_flags[0] = 0x00;
-		_flags[1] = 0x00;
-	}
-
-	void value(hxlstr content) 
-	{
-		hxlstr tempVal;
-		uint8_t* pld = &_payload;
-
-		if (content.enc() == hxlstr::ENC::ASCII)
-		{
-			//ASCII
-			pld[0] = 0x00;
-			memcpy(&pld[1], content.c_str(), content.size());		
-			size(content.size() + 1);
-		}
-		else if (content.enc() == hxlstr::ENC::UNICD)
-		{
-			//UNICODE
-			pld[0] = 0x01;
-			pld[1] = 0xFE;
-			pld[2] = 0xFF;
-			memcpy(&pld[3], content.c16_str(), content.size());
-			size(content.size() + 3);
-		}		
-	}
-
+	void id(hxlstr id); //id(hxlstr) method writes a new Id to a frame
+	void flags(); //flags() method clears the flag byte
+	void value(hxlstr content); //value(hxlstr content) method writes a string to the payload field.
 };
 
+std::ostream& operator<<(std::ostream& out, const FrmHdr& frm);

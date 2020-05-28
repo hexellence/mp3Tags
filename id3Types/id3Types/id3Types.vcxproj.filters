@@ -30,13 +30,10 @@
     <ClCompile Include="______runThis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Id3v2Frm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="fileUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ID3v2Util.cpp">
+    <ClCompile Include="Id3v2Tag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,13 +50,10 @@
     <ClInclude Include="ID3v2Defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Id3v2Frm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="fileUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Id3v2Util.h">
+    <ClInclude Include="Id3v2Tag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

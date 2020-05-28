@@ -1,6 +1,10 @@
 #include "Hdr.h"
 
-
+/*
+	calcID3v2SizeField() returns the size by reading the size field. 
+	the field normally must comply to the standard and leave the most significant bit of each byte 0; 
+	however sometimes I observed some mp3 files don't comply its been seen as first frame address regardless there is a valid frame
+*/
 int Hdr::calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc) {
 
 	int retVal = 0;
@@ -21,4 +25,15 @@ int Hdr::calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc) {
 	}
 	return retVal;
 }
+
+
+/*
+	hdr_size() method returns the size of the header.
+*/
+int Hdr::hdr_size()
+{
+	return ID3V2_HDR_SIZE;
+}
+
+
 

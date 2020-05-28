@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-#include"Id3v2Frm.h"
+#include"Id3v2Tag.h"
 
 
 using namespace std;
@@ -50,7 +50,7 @@ int main()
     //clear
     cout << "clear method" << endl;
     tag1.clear();
-    for (Id3v2Tag::iterator it = tag1.begin(); it != tag1.end(); it++) {
+    for (Id3v2Tag::iterator it = tag1.first(); it != tag1.end(); it++) {
         cout << (*it).id() << ": " << (*it).value() << endl;
     }
 
@@ -60,7 +60,7 @@ int main()
     tag1.push_back("TALB", "Deniz Erdogan");
     tag1.push_back("COMM", "Tunca Erdogan");
     for (Id3v2Tag::iterator it = tag1.begin(); it != tag1.end(); it++) {
-        cout << (*it).id() << ": " << (*it).value() << endl;
+        cout << (*it) << endl;
     }
 
     std::cout << "Hello World!\n";

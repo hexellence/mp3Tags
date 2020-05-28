@@ -1,6 +1,6 @@
 #pragma once
-#include "FrmHdr.h"
 #include "Hdr.h"
+#include "FrmHdr.h"
 
 class TagHdr : public Hdr
 {
@@ -14,54 +14,16 @@ private:
 public:
 	//Don't want any auto constructors as the memory will be provided 
 	//by reserving a memory and all functions work on that memory area
-	TagHdr() = delete;			
+	TagHdr() = delete;
 	TagHdr(const TagHdr& other) = delete;
 
-	//checkers
-	bool valid() const
-	{
-		return (id() == "ID3");
-	}
-
-
 	//getters
-	hxlstr id() const
-	{
-		return hxlstr(_id, 3);
-	}	
-
-
-	int size() const
-	{
-		return calcID3v2SizeField(_size);
-	}
-
-
-	FrmHdr* first()
-	{
-		FrmHdr* firstFrm = (FrmHdr*)&_firstFrm;		
-		return firstFrm;
-	}
-
-
+	bool valid() const; //valid() method returns true if the tag is starting with the expected characters	
+	hxlstr id() const; //id() method returns the id of the tag	
+	int size() const;//size() method returns the size of the tag
+	int bytes() const; //bytes() method returns the whole size of the tag including the header
+	
 	//setters
-	void size(int size)
-	{
-		int temp = size;
-		int i = 3;
-		while (temp > 0) {
-
-			_size[i] = temp % 128;
-			i--;
-			temp = temp / 128;
-		}		
-	}
-
-	void id() 
-	{
-		_id[0] = 'I';
-		_id[0] = 'D';
-		_id[0] = '3';		
-	}
+	FrmHdr* first(); //first() returns the first frame address regardless there is a valid frame		
+	void size(int size); //size(int) sets the size of the tag
 };
-
