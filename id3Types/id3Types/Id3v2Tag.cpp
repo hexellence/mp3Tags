@@ -116,6 +116,11 @@ FrmHdr& Id3v2Tag::iterator::operator*()
 	return *m_pos;
 }
 
+const FrmHdr& Id3v2Tag::iterator::operator*() const
+{
+	return *m_pos;
+}
+
 /*
 	operator!=() this is for comparing the itearators
 */
@@ -305,4 +310,10 @@ void Id3v2Tag::clear()
 	{
 		del(it);
 	}
+}
+
+
+std::ostream& operator<<(std::ostream& out, const Id3v2Tag::iterator& it) {
+	out << (*it).id() << ": " << (*it).value() << std::flush;
+	return out;
 }

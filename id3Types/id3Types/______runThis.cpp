@@ -15,14 +15,19 @@ int main()
 {
 
     Id3v2Tag tag1(filePath);
-    //Id3v2Tag tag2(filePath);
-    //Id3v2Tag tag3(filePath);
+
 
     //TAG1
     cout << "check iterator" << endl;
     for (Id3v2Tag::iterator it = tag1.begin(); it != tag1.end(); it++) {
         cout << (*it).id() << ": " << (*it).value() << endl;
     }
+
+    cout << endl;
+    
+    cout << tag1.first() << endl;
+    cout << tag1.last() << endl;
+    cout << tag1.find("TIT2") << endl;
 
     cout << endl;
 

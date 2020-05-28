@@ -34,6 +34,7 @@ public:
 		iterator& operator++(int); //operator++(int) postfix increment operator to walk from one frame to the next
 		iterator& operator++();
 		FrmHdr& operator*();
+		const FrmHdr& operator*() const;
 		bool operator!=(const iterator& other) const; //operator!=() this is for comparing the itearators
 		const iterator& operator=(const iterator& other); //operator=() this is for assigning
 	};
@@ -48,5 +49,7 @@ public:
 	void push_back(hxlstr id, hxlstr text); //push_back(hxlstr id, hxlstr text) adds the frame with the given parameters to the tag
 	void insert(iterator it, hxlstr id, hxlstr text); //insert() inserts a frame pointed by the iterator
 	void clear(); //clear() deletes all frames from the tag
+
 };
 
+std::ostream& operator<<(std::ostream& out, const Id3v2Tag::iterator& it);
