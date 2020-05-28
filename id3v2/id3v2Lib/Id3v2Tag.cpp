@@ -63,11 +63,13 @@ Id3v2Tag::Id3v2Tag(std::filesystem::path filePath) {
 	// if size is successful
 	if (size > 0)
 	{
+		
 		m_pWholeTag = new uint8_t[size * 2];
 		FrmHdr* firstFrame = readID3v2Tag(filePath, m_pWholeTag, size + Hdr::hdr_size());
 		if (firstFrame != nullptr)
 		{
 			m_pTagHdr = (TagHdr*)m_pWholeTag;
+			m_path = filePath;
 		}
 	}
 }
@@ -310,6 +312,14 @@ void Id3v2Tag::clear()
 	{
 		del(it);
 	}
+}
+
+/*
+	path() returns the path to the file
+*/
+const std::filesystem::path& Id3v2Tag::path()
+{
+	return m_path;
 }
 
 

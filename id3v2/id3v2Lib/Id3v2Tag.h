@@ -12,6 +12,7 @@ private:
 
 	TagHdr* m_pTagHdr;
 	uint8_t* m_pWholeTag;
+	std::filesystem::path m_path;
 
 	int getID3v2TagHeader(std::filesystem::path filePath, TagHdr* hdr); //getID3v2TagHeader() method reads only the tag hdr and returns the size and returns the Tag header via pointer.
 	FrmHdr* readID3v2Tag(std::filesystem::path filePath, uint8_t* id3v2Tag, int tagsize); //readID3v2Tag() method reads the whole tag i.e. tag hdr and frames to a memory area(via pointer), also returns a pointer to the first frame
@@ -44,6 +45,7 @@ public:
 	iterator first(); //first() method is like begin but only returns valid frames.
 	iterator last(); //last() returns an iterator to the last valid frame.
 	iterator find(hxlstr id); //find() method returns and iterator to the first instance of the matching frame starting from the top.
+	const std::filesystem::path& path();	//returns path of the file
 	void del(hxlstr id); //del(hxlstr) deletes the frame with the given id. the later frames will scooch to the front
 	void del(iterator it); //del(iterator) deletes the given frame pointed by the iterator
 	void push_back(hxlstr id, hxlstr text); //push_back(hxlstr id, hxlstr text) adds the frame with the given parameters to the tag
