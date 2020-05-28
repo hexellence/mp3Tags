@@ -9,18 +9,12 @@ private:
 	uint8_t _ver[2];
 	uint8_t _flags;
 	uint8_t _size[4];
-	FrmHdr _firstFrm;
+	char _firstFrm;
 
 public:
-	//Constructors
-	TagHdr() : _firstFrm(FrmHdr("", ""))
-	{
-		memcpy(_id, "ID3", 3);
-		_flags = 0x00;
-		memset(_ver, 0, 2);
-		memset(_size, 0, 4);		
-	}
-		
+	//Don't want any auto constructors as the memory will be provided 
+	//by reserving a memory and all functions work on that memory area
+	TagHdr() = delete;			
 	TagHdr(const TagHdr& other) = delete;
 
 	//checkers
@@ -45,15 +39,12 @@ public:
 
 	FrmHdr* first()
 	{
-		if (_firstFrm.valid())
-			return &_firstFrm;
-		else
-			return nullptr;
+		FrmHdr* firstFrm = (FrmHdr*)&_firstFrm;		
+		return firstFrm;
 	}
 
 
 	//setters
-
 	void size(int size)
 	{
 		int temp = size;
@@ -64,6 +55,13 @@ public:
 			i--;
 			temp = temp / 128;
 		}		
+	}
+
+	void id() 
+	{
+		_id[0] = 'I';
+		_id[0] = 'D';
+		_id[0] = '3';		
 	}
 };
 

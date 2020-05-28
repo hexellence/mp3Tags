@@ -155,6 +155,7 @@
     <ClCompile Include="fileUtil.cpp" />
     <ClCompile Include="FrmHdr.cpp" />
     <ClCompile Include="Hdr.cpp" />
+    <ClCompile Include="ID3v2Util.cpp" />
     <ClCompile Include="Id3v2Frm.cpp" />
     <ClCompile Include="______runThis.cpp" />
     <ClCompile Include="TagHdr.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Hdr.h" />
     <ClInclude Include="ID3v2Defs.h" />
     <ClInclude Include="Id3v2Frm.h" />
+    <ClInclude Include="Id3v2Util.h" />
     <ClInclude Include="TagHdr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

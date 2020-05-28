@@ -14,51 +14,54 @@ const char filePath[] = { "D:\\mp3\\mp3\\Alberto Iglesias - Banda\\Habla Con Ell
 int main()
 {
 
-    Id3v2Tag myTag(filePath);
+    Id3v2Tag tag1(filePath);
+    //Id3v2Tag tag2(filePath);
+    //Id3v2Tag tag3(filePath);
 
-    for (Id3v2Tag::iterator it = myTag.begin(); it != myTag.end(); it++) {
-        cout << (*it).id() << endl;
+    //TAG1
+    cout << "check iterator" << endl;
+    for (Id3v2Tag::iterator it = tag1.begin(); it != tag1.end(); it++) {
+        cout << (*it).id() << ": " << (*it).value() << endl;
     }
 
+    cout << endl;
 
-    myTag.insert(myTag.find("TIT2"), "TUNC", "Deniz Erdogan");
+    //insert
+    cout << "insert COMM in place of TIT2" << endl;
+    tag1.insert(tag1.find("TIT2"), "COMM", "Deniz Erdogan");
+    
+    for (Id3v2Tag::iterator it = tag1.begin(); it != tag1.end(); it++) {
+        cout << (*it).id() << ": " << (*it).value() << endl;
+    }
 
-    myTag.clear();
+    cout << endl;
 
-    myTag.del("GEOB");
-    myTag.del("TIT2");
-    myTag.del("TCON");
-    myTag.del("TRCK");
-    myTag.del("MCDI");
-    myTag.del("TFLT");
-    myTag.del("TALB");
-    myTag.del("COMM");
-    myTag.del("PRIV");
-    myTag.del("PRIV");
-    myTag.del("PRIV");
-    myTag.del("PRIV");
-    myTag.del("PRIV");
-    myTag.del("PRIV");
-    myTag.del("TYER");
-    myTag.del("TPE2");
-    myTag.del("TCOM");
-    myTag.del("TPE1");
+    //del method
+    cout << "deleteing MCDI, GEOB, TIT2" << endl;
+    tag1.del("MCDI");
+    tag1.del("GEOB");
+    tag1.del("TIT2");
+    for (Id3v2Tag::iterator it = tag1.begin(); it != tag1.end(); it++) {
+        cout << (*it).id() << ": " << (*it).value() << endl;
+    }
 
-    myTag.push_back("TIT2", "Tunca Erdogan");
-    myTag.push_back("TALB", "Deniz Erdogan");
-    myTag.push_back("TIT2", "Tunca Erdogan");
+    cout << endl;
 
-    //Id3v2Tag tag(filePath);
+    //clear
+    cout << "clear method" << endl;
+    tag1.clear();
+    for (Id3v2Tag::iterator it = tag1.begin(); it != tag1.end(); it++) {
+        cout << (*it).id() << ": " << (*it).value() << endl;
+    }
 
-    //cout << tag["TIT2"] << endl;
+    cout << endl;
 
-    //tag["TIT2"] = "Deneme";
-
-    //for (Id3v2Tag::iterator it = tag.begin(); it != tag.end(); it++)
-    //{
-    //    //cout << (*it).getFrameId() << endl;
-    //}
-
+    tag1.push_back("TIT2", "Tunca Erdogan");
+    tag1.push_back("TALB", "Deniz Erdogan");
+    tag1.push_back("COMM", "Tunca Erdogan");
+    for (Id3v2Tag::iterator it = tag1.begin(); it != tag1.end(); it++) {
+        cout << (*it).id() << ": " << (*it).value() << endl;
+    }
 
     std::cout << "Hello World!\n";
 }

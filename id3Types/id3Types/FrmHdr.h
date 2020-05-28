@@ -31,23 +31,15 @@ public:
 	//Constructors
 	//don't want automatic consctructors. 
 	FrmHdr() = delete;
-	FrmHdr(const FrmHdr& other) = delete;
-
-	//This constructor is only used to create a frame to copy to the actual tag. some class methods should not be executed on objects that are created.
-	FrmHdr(hxlstr name, hxlstr text) 
-	{
-		id(name);
-		value(text);		
-		_flags[0] = 0x00;
-		_flags[1] = 0x00;
-	}	
+	FrmHdr(const FrmHdr& other) = delete;	
 	
 	//Checkers
 	bool valid() const
 	{
+		hxlstr frmId = id();
 		bool idFound = false;
 		for (auto item : ID3_FrameDefs) {
-			if(id() == item.sLongTextID)			
+			if(frmId == item.sLongTextID)
 			{
 				idFound = true;
 				break;
@@ -55,7 +47,6 @@ public:
 		}
 		return idFound;
 	}
-
 
 	//getters
 	hxlstr id() const
@@ -125,7 +116,7 @@ public:
 			//UNICODE
 			if (size() > 4)
 			{
-				tempVal = hxlstr((uint8_t*)&content[3], size() - 3, hxlstr::ENC::UTF16LE);
+				tempVal = hxlstr((uint8_t*)&content[3], size() - 3, hxlstr::ENC::UNICD);
 			}
 		}
 		return tempVal;
@@ -157,7 +148,7 @@ public:
 			memcpy(&pld[1], content.c_str(), content.size());		
 			size(content.size() + 1);
 		}
-		else if (content.enc() == hxlstr::ENC::UTF16LE)
+		else if (content.enc() == hxlstr::ENC::UNICD)
 		{
 			//UNICODE
 			pld[0] = 0x01;

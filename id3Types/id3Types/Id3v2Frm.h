@@ -1,12 +1,11 @@
 #pragma once
 
-#include "FrmHdr.h"
+#include <filesystem>
+#include <iostream>
 #include "TagHdr.h"
 #include "FileUtil.h"
-#include <filesystem>
-#include <utility>
 
-
+using namespace std;
 
 class Id3v2Tag
 {
@@ -14,7 +13,6 @@ private:
 
 	TagHdr* m_pTagHdr;
 	uint8_t* m_pWholeTag;
-
 
 	int getID3v2TagHeader(std::filesystem::path filePath, TagHdr* hdr)
 	{
@@ -47,8 +45,13 @@ private:
 public:
 
 	Id3v2Tag(std::filesystem::path filePath) {
-		TagHdr hdr;
-		int size = getID3v2TagHeader(filePath, &hdr);
+
+		//getting the size first
+		char* pTagHdr = new char[sizeof(TagHdr)];
+		int size = getID3v2TagHeader(filePath, (TagHdr*)pTagHdr);
+		delete[] pTagHdr;
+
+		// if size is successful
 		if (size > 0)
 		{
 			m_pWholeTag = new uint8_t[size * 2];
@@ -102,33 +105,18 @@ public:
 		}	
 	};
 
+
 	iterator begin()
 	{
-		if (m_pTagHdr->first()->valid())
-			return iterator(m_pTagHdr->first(), *this);
-		else
-			return end();
+		return iterator(m_pTagHdr->first(), *this);
 	}
+
 
 	iterator end()
 	{
 		return iterator(nullptr, *this);
 	}
 
-	//FrmHdr* find(hxlstr id)
-	//{
-	//	FrmHdr* pFrm = m_pTagHdr->first();
-	//	while (pFrm != nullptr)
-	//	{
-	//		if (pFrm->id() == id)
-	//		{
-	//			break;
-	//		}
-
-	//		pFrm = pFrm->next();
-	//	}
-	//	return pFrm;
-	//}
 
 	iterator find(hxlstr id)
 	{
@@ -144,18 +132,6 @@ public:
 		return it;
 	}
 
-	FrmHdr* lastAddress()
-	{
-		FrmHdr* curFrm = m_pTagHdr->first();
-		FrmHdr* nextFrm = curFrm;
-
-		while (nextFrm != nullptr)
-		{
-			curFrm = nextFrm;
-			nextFrm = curFrm->next();
-		}
-		return curFrm;
-	}
 
 	iterator last()
 	{
@@ -169,11 +145,13 @@ public:
 		return itLast;
 	}
 
+
 	void del(hxlstr id)
 	{
 		iterator it = find(id);
 		del(it);
 	}
+
 
 	void del(iterator it)
 	{		
@@ -199,30 +177,35 @@ public:
 		}
 	}
 
+
 	void push_back(hxlstr id, hxlstr text)
 	{
-		iterator it = last();
-		FrmHdr* lastFrm = &(*it);
-
-		int lastFrameSize = 0;
-		if (lastFrm->valid())
+		if (checkId(id))
 		{
-			lastFrameSize = lastFrm->size() + ID3V2_HDR_SIZE;
+			iterator it = last();
+			FrmHdr* lastFrm = &(*it);
+
+			int lastFrameSize = 0;
+			if (lastFrm->valid())
+			{
+				lastFrameSize = lastFrm->size() + ID3V2_HDR_SIZE;
+			}
+
+			FrmHdr* newFrm = (FrmHdr*)((int)lastFrm + lastFrameSize);
+
+			newFrm->id(id);
+			newFrm->flags();
+			newFrm->value(text);
+
+			//update Tag size
+			m_pTagHdr->size(m_pTagHdr->size() + newFrm->size() + ID3V2_HDR_SIZE);
 		}
-
-		FrmHdr* newFrm = (FrmHdr*)((int)lastFrm + lastFrameSize);
-		
-		newFrm->id(id);		
-		newFrm->flags();
-		newFrm->value(text);		
-
-		//update Tag size
-		m_pTagHdr->size(m_pTagHdr->size() + newFrm->size() + ID3V2_HDR_SIZE);
 	}
+
 
 	void insert(iterator it, hxlstr id, hxlstr text)
 	{			
-		if (it != end())
+		if ((it != end()) && checkId(id))
 		{
 			int newFrmSize = (text.enc() == hxlstr::ENC::ASCII) ? text.size() + 1 : text.size() + 3;
 			newFrmSize += ID3V2_HDR_SIZE;
@@ -231,10 +214,18 @@ public:
 			FrmHdr* newLocation = (FrmHdr*)((int)presentFrm + newFrmSize); //present frame's new location
 
 			//calculate how much data will be moved
-			int moveSize = m_pTagHdr->size() + ID3V2_HDR_SIZE - (int)presentFrm + (int)m_pTagHdr;
+			int lastAddress = (int)m_pTagHdr + m_pTagHdr->size() + ID3V2_HDR_SIZE;
+			int moveSize = lastAddress - (int)presentFrm;
+			
 			//copy and make space where the former frame was
-
-			memcpy(newLocation, presentFrm, moveSize);
+			if (moveSize > 0)
+			{
+				memcpy(newLocation, presentFrm, moveSize);
+			}
+			else
+			{
+				cout << "sizeProblem" << endl;
+			}
 			
 			//presentFrm will now contain new
 			presentFrm->id(id);
@@ -242,21 +233,18 @@ public:
 			presentFrm->value(text);
 			//update Tag size		
 			m_pTagHdr->size(m_pTagHdr->size() + newFrmSize);
-		}
-
-		
+		}		
 	}
+
 
 	void clear()
 	{
-		while (begin() != end())
+		iterator it = begin();
+
+		while ((*it).valid())
 		{
-			del(begin());
+			del(it);
 		}
 	}
-
 };
-
-
-/******************************************************************/
 

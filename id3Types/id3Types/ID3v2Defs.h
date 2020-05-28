@@ -1,5 +1,10 @@
 #pragma once
+
+#include "hxlstr.h"
+
 static const int ID3V2_HDR_SIZE = 10;
+
+
 
 enum ID3_FrameID
 {
@@ -183,3 +188,5 @@ static  ID3_FrameDef ID3_FrameDefs[] =
 {ID3FID_WWWPUBLISHER,		"WPUB", "Official publisher webpage"},
 {ID3FID_WWWUSER,			"WXXX", "User defined URL link"},
 };
+
+bool checkId(hxl::hxlstr id);
