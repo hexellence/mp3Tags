@@ -27,13 +27,13 @@
     <ClCompile Include="TagHdr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="______runThis.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="fileUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Id3v2Tag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestId3v2HdrProject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
