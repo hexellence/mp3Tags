@@ -113,7 +113,7 @@ hxlstr FrmHdr::value() const
 		//ASCII
 		if (size() > 1)
 		{
-			tempVal = hxlstr(&content[1], size() - 1);
+			tempVal = hxlstr(&content[1], size() - 1);	
 		}
 		break;
 	case 0x01:
@@ -127,6 +127,10 @@ hxlstr FrmHdr::value() const
 		tempVal = "";
 		break;
 	}	
+	tempVal.trim();
+	tempVal.drop('\r');
+	tempVal.drop('\t');
+	tempVal.drop('\0');
 	return tempVal;
 }
 

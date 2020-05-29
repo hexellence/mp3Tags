@@ -189,7 +189,7 @@ Id3v2Tag::iterator Id3v2Tag::last()
 */
 Id3v2Tag::iterator Id3v2Tag::find(hxlstr id) 
 {
-	iterator it = iterator(m_pTagHdr->first(), *this);
+	iterator it = first();
 	while (it != end())
 	{
 		if ((*it).id() == id)
@@ -334,8 +334,13 @@ std::ostream& operator<<(std::ostream& out, const Id3v2Tag::iterator& it) {
 */
 hxlstr Id3v2Tag::operator[](hxlstr id) 
 {
+	hxlstr tempVal = "";
 	iterator it = find(id);
-	return (*it).value();
+	if (it != end())
+	{
+		tempVal = (*it).value();
+	}
+	return tempVal;
 }
 
 bool Id3v2Tag::valid() 
