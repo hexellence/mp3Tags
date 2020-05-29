@@ -45,13 +45,14 @@ public:
 	iterator first(); //first() method is like begin but only returns valid frames.
 	iterator last(); //last() returns an iterator to the last valid frame.
 	iterator find(hxlstr id); //find() method returns and iterator to the first instance of the matching frame starting from the top.
+	bool valid();
 	const std::filesystem::path& path();	//returns path of the file
 	void del(hxlstr id); //del(hxlstr) deletes the frame with the given id. the later frames will scooch to the front
 	void del(iterator it); //del(iterator) deletes the given frame pointed by the iterator
 	void push_back(hxlstr id, hxlstr text); //push_back(hxlstr id, hxlstr text) adds the frame with the given parameters to the tag
 	void insert(iterator it, hxlstr id, hxlstr text); //insert() inserts a frame pointed by the iterator
-	void clear(); //clear() deletes all frames from the tag
-
+	void clear(); //clear() deletes all frames from the tag	
+	hxlstr operator[](hxlstr id);
 };
 
 std::ostream& operator<<(std::ostream& out, const Id3v2Tag::iterator& it);

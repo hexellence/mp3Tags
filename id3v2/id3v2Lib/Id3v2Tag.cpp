@@ -187,7 +187,7 @@ Id3v2Tag::iterator Id3v2Tag::last()
 /*
 	find() method returns and iterator to the first instance of the matching frame starting from the top.
 */
-Id3v2Tag::iterator Id3v2Tag::find(hxlstr id)
+Id3v2Tag::iterator Id3v2Tag::find(hxlstr id) 
 {
 	iterator it = iterator(m_pTagHdr->first(), *this);
 	while (it != end())
@@ -326,4 +326,19 @@ const std::filesystem::path& Id3v2Tag::path()
 std::ostream& operator<<(std::ostream& out, const Id3v2Tag::iterator& it) {
 	out << (*it).id() << ": " << (*it).value() << std::flush;
 	return out;
+}
+
+
+/*
+	operator[] works only to read
+*/
+hxlstr Id3v2Tag::operator[](hxlstr id) 
+{
+	iterator it = find(id);
+	return (*it).value();
+}
+
+bool Id3v2Tag::valid() 
+{
+	return m_pTagHdr->valid();
 }
