@@ -17,6 +17,8 @@ private:
 
 	void size(int size); /*size(int) method lets the class set the payload size when a string is written to a frame.
 							This function is not public, as it may cause problems if it is not used carefully.*/
+	void flags(); //flags() method clears the flag byte
+	void value(hxlstr content); //value(hxlstr content) method writes a string to the payload field.
 
 public:
 	//Constructors
@@ -32,11 +34,11 @@ public:
 	int bytes() const; //bytes() method returns the size of the payload and the header.
 	FrmHdr* next() const; //next() method returns a pointer to the next frame.
 	hxlstr value() const; //value() method returns a copy of the string in the frame.
+	const FrmHdr* start() const; //start() method returns the address of the header.
 	
 	//setters
 	void id(hxlstr id); //id(hxlstr) method writes a new Id to a frame
-	void flags(); //flags() method clears the flag byte
-	void value(hxlstr content); //value(hxlstr content) method writes a string to the payload field.
+	friend class Id3v2Tag;
 };
 
 std::ostream& operator<<(std::ostream& out, const FrmHdr& frm);

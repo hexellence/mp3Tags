@@ -50,12 +50,12 @@ int FrmHdr::size() const
 
 	int plSize = calcID3v2SizeField(_payloadSize);
 	int retVal = plSize;
-	nextFrame = (FrmHdr*)((int)this + hdr_size() + plSize);
+	nextFrame = (FrmHdr*)((int)start() + hdr_size() + plSize);
 
 	if (!nextFrame->valid())
 	{
 		plSize = calcID3v2SizeField(_payloadSize, true); //non standard 
-		nextFrame = (FrmHdr*)((int)this + hdr_size() + plSize);
+		nextFrame = (FrmHdr*)((int)start() + hdr_size() + plSize);
 
 		if (nextFrame->valid())
 		{
@@ -77,6 +77,14 @@ int FrmHdr::bytes() const
 }
 
 /*
+	start() method returns the address of the header
+*/
+const FrmHdr* FrmHdr::start() const
+{
+	return (const FrmHdr*)_id;
+}
+
+/*
 	next() method returns a pointer to the next frame. if the next frame is not valid it returns nullptr.
 	it also checks non complying frames.
 */
@@ -85,12 +93,12 @@ FrmHdr* FrmHdr::next() const
 	FrmHdr* nextFrame = nullptr;
 
 	int plSize = calcID3v2SizeField(_payloadSize);
-	nextFrame = (FrmHdr*)((int)this + hdr_size() + plSize);
+	nextFrame = (FrmHdr*)((int)start() + hdr_size() + plSize);
 
 	if (!nextFrame->valid())
 	{
 		plSize = calcID3v2SizeField(_payloadSize, true); //non standard 
-		nextFrame = (FrmHdr*)((int)this + hdr_size() + plSize);
+		nextFrame = (FrmHdr*)((int)start() + hdr_size() + plSize);
 
 		if (!nextFrame->valid())
 		{
@@ -170,8 +178,8 @@ void FrmHdr::value(hxlstr content)
 	{
 		//UNICODE
 		pld[0] = 0x01;
-		pld[1] = 0xFE;
-		pld[2] = 0xFF;
+		pld[1] = 0xFF;
+		pld[2] = 0xFE;
 		memcpy(&pld[3], content.c16_str(), content.size());
 		size(content.size() + 3);
 	}

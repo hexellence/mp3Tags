@@ -63,7 +63,7 @@ Id3v2Tag::Id3v2Tag(std::filesystem::path filePath) {
 	// if size is successful
 	if (size > 0)
 	{
-		
+
 		m_pWholeTag = new uint8_t[size * 2];
 		FrmHdr* firstFrame = readID3v2Tag(filePath, m_pWholeTag, size + Hdr::hdr_size());
 		if (firstFrame != nullptr)
@@ -80,6 +80,23 @@ Id3v2Tag::Id3v2Tag(std::filesystem::path filePath) {
 Id3v2Tag::~Id3v2Tag()
 {
 	delete[] m_pWholeTag;
+}
+
+
+/*
+	tag() returns the start address of the tag data
+*/
+const char* Id3v2Tag::start()
+{
+	return (const char*)m_pWholeTag;
+}
+
+/*
+	size() returns the size of the tag
+*/
+int Id3v2Tag::size()
+{
+	return m_pTagHdr->size() + Hdr::ID3V2_HDR_SIZE;
 }
 
 /*
@@ -116,6 +133,14 @@ Id3v2Tag::iterator& Id3v2Tag::iterator::operator++()
 FrmHdr& Id3v2Tag::iterator::operator*()
 {
 	return *m_pos;
+}
+
+/*
+	operator->() this is for returning the base type of the tag i.e. frame
+*/
+FrmHdr* Id3v2Tag::iterator::operator->()
+{
+	return m_pos;
 }
 
 const FrmHdr& Id3v2Tag::iterator::operator*() const
@@ -187,7 +212,7 @@ Id3v2Tag::iterator Id3v2Tag::last()
 /*
 	find() method returns and iterator to the first instance of the matching frame starting from the top.
 */
-Id3v2Tag::iterator Id3v2Tag::find(hxlstr id) 
+Id3v2Tag::iterator Id3v2Tag::find(hxlstr id)
 {
 	iterator it = first();
 	while (it != end())
@@ -301,6 +326,20 @@ void Id3v2Tag::insert(iterator it, hxlstr id, hxlstr text)
 	}
 }
 
+
+/*
+	modify() modifies an already existing frame
+*/
+void Id3v2Tag::modify(iterator it, hxlstr text)
+{
+	if (it != end())
+	{
+		hxlstr id = it->id();
+		del(it);
+		insert(it, id, text);
+	}
+}
+
 /*
 	clear() deletes all frames from the tag
 */
@@ -332,7 +371,7 @@ std::ostream& operator<<(std::ostream& out, const Id3v2Tag::iterator& it) {
 /*
 	operator[] works only to read
 */
-hxlstr Id3v2Tag::operator[](hxlstr id) 
+hxlstr Id3v2Tag::operator[](hxlstr id)
 {
 	hxlstr tempVal = "";
 	iterator it = find(id);
@@ -343,7 +382,12 @@ hxlstr Id3v2Tag::operator[](hxlstr id)
 	return tempVal;
 }
 
-bool Id3v2Tag::valid() 
+bool Id3v2Tag::valid()
 {
-	return m_pTagHdr->valid();
+	bool retVal = false;
+	if (m_pTagHdr != nullptr)
+	{
+		retVal = m_pTagHdr->valid();
+	}
+	return retVal;
 }
