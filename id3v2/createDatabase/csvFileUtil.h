@@ -10,7 +10,7 @@ using namespace hxl;
 const hxlstr SEPARATOR{ "\t" };
 const hxlstr CR{ "\r" };
 const hxlstr SPACE{ " " };
-const hxlstr csvColumns[]{ "FNME", SEPARATOR, "TIT2", SEPARATOR,"TRCK", SEPARATOR, "TALB", SEPARATOR, "TPE1", SEPARATOR, "TPE2", SEPARATOR, "TYER", SEPARATOR,"TCON", SEPARATOR, "COMM", SEPARATOR, "FPTH", "\r" };
+const hxlstr csvColumns[]{ "FNME", SEPARATOR, "TIT2", SEPARATOR,"TRCK", SEPARATOR, "TALB", SEPARATOR, "TPE1", SEPARATOR, "TPE2", SEPARATOR, "TYER", SEPARATOR,"TCON", SEPARATOR, "FPTH", "\r" };
 const char BOM[]{ "\xff\xfe" };	//BOM for Unicode 16 Little Endian
 
 void writeColumns(std::ofstream& file);

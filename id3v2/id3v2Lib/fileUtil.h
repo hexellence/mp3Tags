@@ -8,3 +8,7 @@ bool isWma(std::filesystem::path filePath);
 int getFileSize(std::filesystem::path filename);
 bool readFile(std::filesystem::path filePath, char* data, int sizeDirectionToRead);
 bool readFile(std::filesystem::path filePath, char* data, int startOffset, int endOffset);
+
+int getAudioOffset(std::ifstream& mp3File, int size);
+int getAudioOffset(std::filesystem::path filePath);
+int getID3v2TagSize(std::filesystem::path filePath);

@@ -7,6 +7,7 @@
 #include "hxlstr.h"
 #include "Id3v2Tag.h"
 #include "csvfileUtil.h"
+#include "fileUtil.h"
 
 
 using namespace std;
@@ -16,7 +17,7 @@ bool getColumnNames(std::filesystem::path filePath, vector<hxlstr>& columnNames)
 bool readArchiveList(std::filesystem::path filePath, vector<map<hxlstr, hxlstr>>& table);
 void setID3Headers(std::filesystem::path filePathIn, std::filesystem::path filePathOut, Id3v2Tag& tag);
 
-std::filesystem::path musicTableFile = { "D:\\mp3\\mp3\\musicArchive.txt" };
+std::filesystem::path musicTableFile = { "D:\\mp3\\musicArchive.txt" };
 
 int main()
 {
@@ -74,10 +75,19 @@ int main()
 					}
 				}//for each frame in tag
 				//save the changes
-				if ((change == true) || (filePathOut != filePathOut))
+				if ((change == true) || (filePathIn != filePathOut))
 				{
 					//save the file with changes
-					cout << "Changing: " << filePathIn << endl;
+					cout << "." << flush;
+					if (filePathIn == filePathOut)
+					{
+						auto newPath = filePathOut.parent_path();
+						auto newName = filePathOut.filename();
+						newName += "_hxl.mp3";
+						newPath += "/";
+						newPath += newName;
+						filePathOut = newPath;
+					}
 					setID3Headers(filePathIn, filePathOut, tag);
 					change = false;
 				}//change
@@ -114,6 +124,7 @@ bool getColumnNames(std::filesystem::path filePath, vector<hxlstr>& columnNames)
 			if (newChar == CR)
 			{
 				//tabFile.read((char*)charPair, 2); //dummy read
+				word.trim(hxlstr('"'));
 				columnNames.push_back(word);
 				isSuccess = true;
 				break;
@@ -121,6 +132,7 @@ bool getColumnNames(std::filesystem::path filePath, vector<hxlstr>& columnNames)
 			else if (newChar == SEPARATOR)
 			{
 				word.trim();
+				word.trim(hxlstr('"'));
 				word.drop(u'\t');
 				columnNames.push_back(word);
 				word = "";
@@ -162,6 +174,7 @@ bool readArchiveList(std::filesystem::path filePath, vector<map<hxlstr, hxlstr>>
 				if (newChar == CR)
 				{
 					//tabFile.read((char*)charPair, 2); //dummy read
+					word.trim(hxlstr('"'));
 					row[columnNames[i]] = word;
 					table.push_back(row);
 					word = "";
@@ -171,6 +184,7 @@ bool readArchiveList(std::filesystem::path filePath, vector<map<hxlstr, hxlstr>>
 				else if (newChar == SEPARATOR)
 				{
 					word.trim();
+					word.trim(hxlstr('"'));
 					word.drop(u'\t');
 					row[columnNames[i]] = word;
 					word = "";
@@ -186,38 +200,6 @@ bool readArchiveList(std::filesystem::path filePath, vector<map<hxlstr, hxlstr>>
 	return isSuccess;
 }
 
-
-int getAudioOffset(std::ifstream& mp3File, int size)
-{
-	int offset = 0;
-
-	if (mp3File.is_open()) {
-		uint8_t bytes[2]{};
-
-		while (((bytes[0] != mp3AudioHeader[0]) || (bytes[1] != mp3AudioHeader[1])) && (offset < size)) {
-			mp3File.read((char*)&bytes[0], 1);	//only read header first for effectiveness
-			offset++;
-			if (bytes[0] == mp3AudioHeader[0]) {
-				mp3File.read((char*)&bytes[1], 1);	//only read header first for effectiveness				
-				offset++;
-			}
-		}
-	}
-	if (offset >= 2) {
-		offset = offset - 2;
-	}
-	return offset;
-}
-
-int getAudioOffset(std::filesystem::path filePath)
-{
-	std::ifstream mp3File;
-	int fileSize = (int)getFileSize(filePath);
-	mp3File.open(filePath, std::ios::binary);
-	int offset = getAudioOffset(mp3File, fileSize);
-	mp3File.close();
-	return offset;
-}
 
 void setID3Headers(std::filesystem::path filePathIn, std::filesystem::path filePathOut, Id3v2Tag& tag)
 {

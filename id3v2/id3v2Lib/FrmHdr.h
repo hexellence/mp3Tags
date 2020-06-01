@@ -19,6 +19,7 @@ private:
 							This function is not public, as it may cause problems if it is not used carefully.*/
 	void flags(); //flags() method clears the flag byte
 	void value(hxlstr content); //value(hxlstr content) method writes a string to the payload field.
+	static bool valid(const char* id);
 
 public:
 	//Constructors

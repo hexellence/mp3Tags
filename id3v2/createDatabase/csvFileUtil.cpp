@@ -45,7 +45,7 @@ void writeNextLine(std::ofstream& file, Id3v2Tag& mp3)
 	
 	for (int i = 2; csvColumns[i] != "FPTH"; i = i + 2)
 	{
-		std::cout << csvColumns[i] << std::endl;
+		//std::cout << csvColumns[i] << std::endl;
 		writeField(file, mp3[csvColumns[i]]);
 		writeField(file, SEPARATOR);
 	}		

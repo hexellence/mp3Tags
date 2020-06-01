@@ -8,6 +8,7 @@ void FrmHdr::size(int size)
 {
 	int temp = size;
 	int i = 3;
+	memset(_payloadSize, 0, 4);
 	while (temp > 0) {
 
 		_payloadSize[i] = temp % 128;
@@ -34,11 +35,34 @@ bool FrmHdr::valid() const
 }
 
 /*
+	valid() method checks a char array for valid nameif the frame is valid.
+*/
+bool FrmHdr::valid(const char* id)
+{
+	hxlstr frmId(id, 4);
+	bool idFound = false;
+	for (auto item : ID3_FrameDefs) {
+		if (frmId == item.sLongTextID)
+		{
+			idFound = true;
+			break;
+		}
+	}
+	return idFound;
+}
+
+
+/*
 	id() method returns the id of the frame.
 */
 hxlstr FrmHdr::id() const
 {
-	return hxlstr(_id, 4);
+	hxlstr idOut = "";
+	if (valid(_id))
+	{
+		idOut = hxlstr(_id, 4);
+	}
+	return idOut;
 }
 
 /*

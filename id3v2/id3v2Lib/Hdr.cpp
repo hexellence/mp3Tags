@@ -23,6 +23,10 @@ int Hdr::calcID3v2SizeField(const uint8_t* number, bool nonStandardCalc) {
 			number[1] * (1 << 16) +
 			number[0] * (1 << 24);
 	}
+	if (retVal < 0) 
+	{
+		retVal = 0;
+	}
 	return retVal;
 }
 

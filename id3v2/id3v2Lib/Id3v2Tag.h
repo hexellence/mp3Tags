@@ -13,7 +13,6 @@ private:
 	TagHdr* m_pTagHdr;
 	uint8_t* m_pWholeTag;
 	std::filesystem::path m_path;
-
 	int getID3v2TagHeader(std::filesystem::path filePath, TagHdr* hdr); //getID3v2TagHeader() method reads only the tag hdr and returns the size and returns the Tag header via pointer.
 	FrmHdr* readID3v2Tag(std::filesystem::path filePath, uint8_t* id3v2Tag, int tagsize); //readID3v2Tag() method reads the whole tag i.e. tag hdr and frames to a memory area(via pointer), also returns a pointer to the first frame
 	static bool checkId(hxlstr id); //checkId() check if this id is a valid Id to instantiate a frame with	

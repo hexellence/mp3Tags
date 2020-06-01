@@ -4,14 +4,14 @@
 using namespace std;
 
 //log files
-const char nonID3FilesLogFileName[] = "D:\\mp3\\mp3\\nonID3FilesLog.txt";
-const char badID3FilesLogFileName[] = "D:\\mp3\\mp3\\badID3FilesLog.txt";
-const char nonMp3FilesLogFileName[] = "D:\\mp3\\mp3\\nonMp3FilesLog.txt";
+const char nonID3FilesLogFileName[] = "D:\\mp3\\log\\nonID3FilesLog.txt";
+const char badID3FilesLogFileName[] = "D:\\mp3\\log\\badID3FilesLog.txt";
+const char nonMp3FilesLogFileName[] = "D:\\mp3\\log\\nonMp3FilesLog.txt";
 
 //list of Mp3s
-const char output_file_name[] = { "D:\\mp3\\mp3\\musicArchive.txt" };
+const char output_file_name[] = { "D:\\mp3\\musicArchive.txt" };
 
-const char archivePath[] = { "D:\\mp3\\mp3" };
+const char archivePath[] = { "D:\\TUNCA_3_music\\Music\\Alphaville" };
 
 
 int main()
@@ -37,7 +37,7 @@ int main()
 
 				if (currentTag.valid())
 				{
-					//wcout << p.path().generic_wstring() << endl;
+					cout << "." << flush;
 					writeNextLine(csvFile, currentTag);					
 				}
 				else
