@@ -17,88 +17,108 @@ bool getColumnNames(std::filesystem::path filePath, vector<hxlstr>& columnNames)
 bool readArchiveList(std::filesystem::path filePath, vector<map<hxlstr, hxlstr>>& table);
 void setID3Headers(std::filesystem::path filePathIn, std::filesystem::path filePathOut, Id3v2Tag& tag);
 
-std::filesystem::path musicTableFile = { "D:\\mp3\\musicArchive.txt" };
 
-int main()
+int main(int argc, char* argv[])
 {
-	ifstream mp3In;
-	ofstream mp3Out;
-
-	vector<map<hxlstr, hxlstr>> archive;
-
-	readArchiveList(musicTableFile, archive);
-
-	for (auto song : archive)
+	if (argc == 2)
 	{
-		//for every map item in vector
-		std::filesystem::path filePathIn = song["FPTH"].c16_str();
-		std::filesystem::path filePathOut = filePathIn.parent_path();
-		filePathOut += "/";
+		ifstream mp3In;
+		ofstream mp3Out;
 
-		if (filePathIn.has_extension())
+		vector<map<hxlstr, hxlstr>> archive;
+
+		std::filesystem::path musicTableFile = argv[1];
+
+		if (readArchiveList(musicTableFile, archive))
 		{
-			
-			bool change = false;
-			filePathOut += song["FNME"].c16_str();
-
-			Id3v2Tag tag(filePathIn);
-
-			if (tag.valid())
+			cout << endl << "Started updating mp3 files" << flush;
+			for (auto song : archive)
 			{
-				for (auto colEntry : song)
 				{
-					if ((colEntry.first != "FNME") && (colEntry.first != "FPTH"))
+					static int count = 0;
+					count++;
+					if (count == 100)
 					{
-						//For every item in map i.e. for every column in a row
-						//Id3v2Tag::iterator curFrm = tag.find("TPE1"); //find the matching frame in tag					
+						cout << "." << flush;
+						count = 0;
+					}
+				}
 
-						Id3v2Tag::iterator curFrm = tag.find(colEntry.first); //find the matching frame in tag
-						if (curFrm != tag.end())
-						{
-							if (curFrm->value() != colEntry.second)
-							{
-								//we have an update in this item					
-								tag.modify(curFrm, colEntry.second);
-								change = true;
-							}
-						}
-						else
-						{
-							//this does not appear to be in the mp3 file's tag so add new
-							if (colEntry.second.size() > 0)
-							{
-								//checking if we have something to add
-								tag.push_back(colEntry.first, colEntry.second);
-								change = true;
-							}
-						}
-					}
-				}//for each frame in tag
-				//save the changes
-				if ((change == true) || (filePathIn != filePathOut))
+				//for every map item in vector
+				std::filesystem::path filePathIn = song["FPTH"].c16_str();
+				std::filesystem::path filePathOut = filePathIn.parent_path();
+				filePathOut += "/";
+
+				if (filePathIn.has_extension())
 				{
-					//save the file with changes
-					cout << "." << flush;
-					if (filePathIn == filePathOut)
+
+					bool change = false;
+					filePathOut += song["FNME"].c16_str();
+
+					Id3v2Tag tag(filePathIn);
+
+					if (tag.valid())
 					{
-						auto newPath = filePathOut.parent_path();
-						auto newName = filePathOut.filename();
-						newName += "_hxl.mp3";
-						newPath += "/";
-						newPath += newName;
-						filePathOut = newPath;
+						for (auto colEntry : song)
+						{
+
+							if ((colEntry.first != "FNME") && (colEntry.first != "FPTH"))
+							{
+								//For every item in map i.e. for every column in a row
+								//Id3v2Tag::iterator curFrm = tag.find("TPE1"); //find the matching frame in tag					
+
+								Id3v2Tag::iterator curFrm = tag.find(colEntry.first); //find the matching frame in tag
+								if (curFrm != tag.end())
+								{
+									if (curFrm->value() != colEntry.second)
+									{
+										//we have an update in this item					
+										tag.modify(curFrm, colEntry.second);
+										change = true;
+									}
+								}
+								else
+								{
+									//this does not appear to be in the mp3 file's tag so add new
+									if (colEntry.second.size() > 0)
+									{
+										//checking if we have something to add
+										tag.push_back(colEntry.first, colEntry.second);
+										change = true;
+									}
+								}
+							}
+						}//for each frame in tag
+						//save the changes
+						if ((change == true) || (filePathIn != filePathOut))
+						{
+							//save the file with changes
+							cout << "." << flush;
+							if (filePathIn == filePathOut)
+							{
+								auto newPath = filePathOut.parent_path();
+								auto newName = filePathOut.filename();
+								newName += "_hxl.mp3";
+								newPath += "/";
+								newPath += newName;
+								filePathOut = newPath;
+							}
+							setID3Headers(filePathIn, filePathOut, tag);
+							change = false;
+						}//change
+					}//if tag is valid
+					else
+					{
+						cout << "Invalid Tag" << endl;
 					}
-					setID3Headers(filePathIn, filePathOut, tag);
-					change = false;
-				}//change
-			}//if tag is valid
-			else
-			{
-				cout << "Invalid Tag" << endl;
-			}
+				}//has extension
+			}// for all songs in the tab separated file
+		}//read archieve
+		else
+		{
+			cout << "archive list cannot be read" << endl;
 		}
-
-	}// for all songs in the tab separated file
+	}
 }
 
 
@@ -152,14 +172,16 @@ bool readArchiveList(std::filesystem::path filePath, vector<map<hxlstr, hxlstr>>
 	bool isSuccess = false;
 	vector<hxlstr> columnNames;
 
-	if (getColumnNames(musicTableFile, columnNames))
+	if (getColumnNames(filePath, columnNames))
 	{
-		ifstream tabFile;
-		tabFile.open(filePath, std::ios::binary | std::ios::beg);
 
+		ifstream tabFile;
+		tabFile.open(filePath, std::ios::binary | std::ios::beg);		
 		if (tabFile.is_open()) {
 			//file is ready
 			hxlstr word;	// will be used to hold the content of the columns
+
+			cout << "Reading database" << flush;
 
 			//read BOM
 			uint8_t charPair[3]{};
@@ -173,18 +195,31 @@ bool readArchiveList(std::filesystem::path filePath, vector<map<hxlstr, hxlstr>>
 				newChar = hxlstr(charPair, 2, hxlstr::ENC::UNICD);
 				if (newChar == CR)
 				{
+					{
+						static int count = 0;
+						count++;
+						if (count == 100)
+						{
+							cout << "." << flush;
+							count = 0;
+						}
+					}
+
 					//tabFile.read((char*)charPair, 2); //dummy read
-					word.trim(hxlstr('"'));
+					if((columnNames[i] == "FNME") || (columnNames[i] == "FPTH"))
+						word.trim(hxlstr('"'));
 					row[columnNames[i]] = word;
 					table.push_back(row);
 					word = "";
 					row.clear();
 					i = 0;
+					isSuccess = true;
 				}
 				else if (newChar == SEPARATOR)
 				{
 					word.trim();
-					word.trim(hxlstr('"'));
+					if ((columnNames[i] == "FNME") || (columnNames[i] == "FPTH"))
+						word.trim(hxlstr('"'));
 					word.drop(u'\t');
 					row[columnNames[i]] = word;
 					word = "";
@@ -203,7 +238,7 @@ bool readArchiveList(std::filesystem::path filePath, vector<map<hxlstr, hxlstr>>
 
 void setID3Headers(std::filesystem::path filePathIn, std::filesystem::path filePathOut, Id3v2Tag& tag)
 {
-	int inFileSize = (int)getFileSize(filePathIn);	
+	int inFileSize = (int)getFileSize(filePathIn);
 
 	std::ofstream outFile;
 	std::ifstream mp3File;
@@ -232,6 +267,10 @@ void setID3Headers(std::filesystem::path filePathIn, std::filesystem::path fileP
 			outFile.write(audioContent, audioSize);	//place the audio
 			//if we need ID3v1.1 add here
 			outFile.close();
+		}
+		else 
+		{
+			std::cout << "file cannot be opened for writing" << std::endl;
 		}
 		delete[] audioContent;
 	}

@@ -4,54 +4,85 @@
 using namespace std;
 
 //log files
-const char nonID3FilesLogFileName[] = "D:\\mp3\\log\\nonID3FilesLog.txt";
-const char badID3FilesLogFileName[] = "D:\\mp3\\log\\badID3FilesLog.txt";
-const char nonMp3FilesLogFileName[] = "D:\\mp3\\log\\nonMp3FilesLog.txt";
+const char nonID3FilesLogFileName[] = "\\Log_NonID3Files.txt";
+const char badID3FilesLogFileName[] = "\\Log_badID3Files.txt";
+const char nonMp3FilesLogFileName[] = "\\Log_nonMp3Files.txt";
 
 //list of Mp3s
-const char output_file_name[] = { "D:\\mp3\\musicArchive.txt" };
-
-const char archivePath[] = { "D:\\TUNCA_3_music\\Music" };
+const char outputFileName[] = { "\\musicArchive.txt" };
 
 
-int main()
+int main(int argc, char* argv[])
 {
 	ofstream csvFile;
 	ofstream nonID3FilesLog;
 	ofstream badID3FilesLog;
 	ofstream nonMp3FilesLog;
-
-	csvFile.open(output_file_name, std::ios::binary);
-	nonID3FilesLog.open(nonID3FilesLogFileName, std::ios::binary);
-	badID3FilesLog.open(badID3FilesLogFileName, std::ios::binary);
-	nonMp3FilesLog.open(nonMp3FilesLogFileName, std::ios::binary);
-
-	if (prepareFiles(csvFile, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog) == true) 
+		
+	if (argc == 2)
 	{
-		for (auto& p : std::filesystem::recursive_directory_iterator(archivePath)) 
-		{
-			if (isMp3(p.path())) 
-			{
-				//create tag every time a file is opened.
-				Id3v2Tag currentTag(p.path());
+		std::filesystem::path archivePath = argv[1];		
+				
+		std::filesystem::path outputFilePath = archivePath;
+		std::filesystem::path nonID3FilesLogFilePath = archivePath;
+		std::filesystem::path badID3FilesLogFilePath = archivePath;
+		std::filesystem::path nonMp3FilesLogFilePath = archivePath;
+		
+		outputFilePath += outputFileName;
+		nonID3FilesLogFilePath += nonID3FilesLogFileName;
+		badID3FilesLogFilePath += badID3FilesLogFileName;
+		nonMp3FilesLogFilePath += nonMp3FilesLogFileName;
+		
+		std::filesystem::path listPath = archivePath;
+		csvFile.open(outputFilePath, std::ios::binary);
+		nonID3FilesLog.open(nonID3FilesLogFilePath, std::ios::binary);
+		badID3FilesLog.open(badID3FilesLogFilePath, std::ios::binary);
+		nonMp3FilesLog.open(nonMp3FilesLogFilePath, std::ios::binary);		
 
-				if (currentTag.valid())
+		if (prepareFiles(csvFile, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog) == true)
+		{
+			cout << "Creating Database." << endl;
+			for (auto& p : std::filesystem::recursive_directory_iterator(archivePath))
+			{
+				if (isMp3(p.path()))
 				{
-					cout << "." << flush;
-					writeNextLine(csvFile, currentTag);					
-				}
+					{
+						static int count = 0;
+						count++;
+						if (count == 100)
+						{
+							cout << "." << flush;
+							count = 0;
+						}
+					}
+					//create tag every time a file is opened.
+					Id3v2Tag currentTag(p.path());
+
+					if (currentTag.valid())
+					{
+						writeNextLine(csvFile, currentTag);
+					}
+					else
+					{
+						//LOG non complying file
+						hxlstr path = p.path().generic_u16string().c_str();
+						writeField(nonID3FilesLog, path);
+						writeField(nonID3FilesLog, CR);
+					}
+				}//if mp3
 				else
 				{
+					//LOG non complying file
 					hxlstr path = p.path().generic_u16string().c_str();
-					writeField(nonID3FilesLog, path);
-					writeField(nonID3FilesLog, CR);
+					writeField(nonMp3FilesLog, path);
+					writeField(nonMp3FilesLog, CR);
 				}
-			}//if mp3
-		}//for all files and folders
-		closeFiles(csvFile, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog);
-	}//if csv file open
-	else 
-	{
-		cout << ".csv one or more files cannot be opened" << endl;
+			}//for all files and folders
+			closeFiles(csvFile, nonID3FilesLog, badID3FilesLog, nonMp3FilesLog);
+		}//if csv file open
+		else
+		{
+			cout << ".csv one or more files cannot be opened" << endl;
+		}
 	}
 }
