@@ -60,13 +60,15 @@ Id3v2Tag::Id3v2Tag(std::filesystem::path filePath) {
 	int size = getID3v2TagHeader(filePath, (TagHdr*)pTagHdr);
 	delete[] pTagHdr;
 
-	int audioOffset = getAudioOffset(filePath);
-	
+	int audioOffset = getAudioOffset(filePath);	
 
 	// if size is successful
 	if (size > 0)
 	{
-		m_pWholeTag = new uint8_t[size * 5];
+		int reserve = size;
+		if(reserve < 5000)
+			reserve = 5000;
+		m_pWholeTag = new uint8_t[reserve * 5];
 		FrmHdr* firstFrame = readID3v2Tag(filePath, m_pWholeTag, size + Hdr::hdr_size());
 		if (firstFrame != nullptr)
 		{
@@ -75,6 +77,7 @@ Id3v2Tag::Id3v2Tag(std::filesystem::path filePath) {
 		}
 	}
 }
+
 
 /*
 	~Id3v2Tag() Destructor
@@ -310,13 +313,13 @@ void Id3v2Tag::insert(iterator it, hxlstr id, hxlstr text)
 		int moveSize = lastAddress - (int)presentFrm;
 
 		//copy and make space where the former frame was
-		if (moveSize > 0)
+		if (moveSize < 0)
 		{
-			memcpy(newLocation, presentFrm, moveSize);
+			cout << "sizeProblem" << endl;
 		}
 		else
 		{
-			cout << "sizeProblem" << endl;
+			memcpy(newLocation, presentFrm, moveSize);			
 		}
 
 		//presentFrm will now contain new

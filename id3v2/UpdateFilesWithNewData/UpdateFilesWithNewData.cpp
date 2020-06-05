@@ -102,7 +102,8 @@ int main(int argc, char* argv[])
 								newPath += "/";
 								newPath += newName;
 								filePathOut = newPath;
-							}
+							}											
+
 							setID3Headers(filePathIn, filePathOut, tag);
 							change = false;
 						}//change
@@ -137,30 +138,37 @@ bool getColumnNames(std::filesystem::path filePath, vector<hxlstr>& columnNames)
 		uint8_t charPair[3]{};
 		tabFile.read((char*)charPair, 2);
 		hxlstr newChar = "";
-		while (!tabFile.eof())
+		if ((charPair[0] == BOM[0]) && (charPair[1] == BOM[1]))
 		{
-			tabFile.read((char*)charPair, 2);
-			newChar = hxlstr(charPair, 2, hxlstr::ENC::UNICD);
-			if (newChar == CR)
+			while (!tabFile.eof())
 			{
-				//tabFile.read((char*)charPair, 2); //dummy read
-				word.trim(hxlstr('"'));
-				columnNames.push_back(word);
-				isSuccess = true;
-				break;
+				tabFile.read((char*)charPair, 2);
+				newChar = hxlstr(charPair, 2, hxlstr::ENC::UNICD);
+				if (newChar == CR)
+				{
+					//tabFile.read((char*)charPair, 2); //dummy read
+					word.trim(hxlstr('"'));
+					columnNames.push_back(word);
+					isSuccess = true;
+					break;
+				}
+				else if (newChar == SEPARATOR)
+				{
+					word.trim();
+					word.trim(hxlstr('"'));
+					word.drop(u'\t');
+					columnNames.push_back(word);
+					word = "";
+				}
+				else
+				{
+					word = word + newChar;
+				}
 			}
-			else if (newChar == SEPARATOR)
-			{
-				word.trim();
-				word.trim(hxlstr('"'));
-				word.drop(u'\t');
-				columnNames.push_back(word);
-				word = "";
-			}
-			else
-			{
-				word = word + newChar;
-			}
+		}
+		else
+		{
+			cout << "BOM not found" << endl;
 		}
 	}
 	return isSuccess;
